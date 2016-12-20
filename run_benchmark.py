@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
+from __future__ import division, print_function
 
 import os
 import re
 import glob
 import subprocess
 import errno
+import traceback
 
 import matplotlib.pyplot as plt
 import seaborn
@@ -16,18 +17,49 @@ seaborn.set()
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
+class AnsiColors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARN = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+
+def print_warn(*args):
+    print(AnsiColors.WARN, end="")
+    print(*args)
+    print(AnsiColors.ENDC, end="")
+
+
+def print_bold(*args):
+    print(AnsiColors.BOLD, end="")
+    print(*args)
+    print(AnsiColors.ENDC, end="")
+
+
 def wordcount_extractor(files):
     runtimes_io = []
     runtimes_split = []
     runtimes_count = []
     for fn in files:
         with open(fn) as f:
-            t1 = float(f.readline())
-            t2 = float(f.readline())
-            t3 = float(f.readline())
-            runtimes_io.append(t1)
-            runtimes_split.append(t2)
-            runtimes_count.append(t3)
+            try:
+                t1 = float(f.readline())
+                t2 = float(f.readline())
+                t3 = float(f.readline())
+                runtimes_io.append(t1)
+                runtimes_split.append(t2)
+                runtimes_count.append(t3)
+            except ValueError, e:
+                print(
+                    AnsiColors.FAIL +
+                    "Output did not fulfil expected format:" +
+                    AnsiColors.ENDC
+                )
+                print(traceback.format_stack())
 
     N = len(files)
     result = {
@@ -38,12 +70,6 @@ def wordcount_extractor(files):
     return result
 
 
-benchmark_args = {
-    "wordcount": [
-        os.path.abspath("data/generated/random_words.txt.gz")
-    ]
-}
-
 benchmark_extractors = {
     "wordcount": wordcount_extractor,
 }
@@ -51,7 +77,21 @@ benchmark_extractors = {
 
 class Wordcount(object):
 
+    _datafile = os.path.abspath("data/generated/random_words.txt")
+
     stages = ["IO", "Split", "Count"]
+    benchmark_args = [_datafile]
+
+    @staticmethod
+    def ensure_data_exists():
+        if not os.path.exists(Wordcount._datafile):
+            print_warn(
+                " *** Generating data for 'word_count', this might take a while..."
+            )
+            from data.generate_text import generate
+            generate(Wordcount._datafile)
+
+
 
 
 benchmark_meta = {
@@ -104,20 +144,33 @@ class Benchmark(object):
         return s
 
     def build(self):
-        pass
 
-    def run(self, args, run_id):
-        # runner = os.path.join(self.path, "run.sh")
-        #"["run.sh"] + args
-        """
+        build_script_path = os.path.join(
+            self.impl_path, "build.sh"
+        )
+        if not os.path.exists(build_script_path):
+            return
+
+        print(" *** Building: {} / {} / {}".format(
+            self.language, self.benchmark_name, self.impl_name
+        ))
         p = subprocess.Popen(
-            "run.sh",
+            [
+                "/bin/bash",
+                "build.sh"
+            ],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            shell=True,
-            cwd=self.path
+            cwd=self.impl_path
         )
-        """
+        stdout, stderr = p.communicate()
+        if len(stderr) > 0:
+            raise RuntimeError(stderr)
+
+    def run(self, args, run_id):
+        print(" *** Running: {} / {} / {}".format(
+            self.language, self.benchmark_name, self.impl_name
+        ))
         p = subprocess.Popen(
             [
                 "/bin/bash",
@@ -125,11 +178,16 @@ class Benchmark(object):
             ] + args,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            cwd=self.path
+            cwd=self.impl_path
         )
         stdout, stderr = p.communicate()
         if len(stderr) > 0:
             raise RuntimeError(stderr)
+
+        # TODO handle return codes
+
+        print("Read stdout of length: {}".format(len(stdout)))
+        print(stdout)
 
         out_path = os.path.join(self.result_path, "stdout_run_{:04d}".format(run_id))
         ensure_dir_exists(out_path)
@@ -161,7 +219,7 @@ def discover_benchmarks(prefix):
             benchmark_name = m.group(3)
             impl_id = m.group(4)
             impl_name = m.group(5)
-            print(language, benchmark_name, impl_name)
+            # print(language, benchmark_name, impl_name)
             impls += [
                 Benchmark(language, benchmark_id, benchmark_name, impl_id, impl_name)
             ]
@@ -170,9 +228,19 @@ def discover_benchmarks(prefix):
 
 
 def run_benchmark(benchmark):
+    print_bold("\nBenchmarking: " + benchmark.benchmark_name)
+
+    # check data
+    meta_data = benchmark_meta[benchmark.benchmark_name]
+    meta_data.ensure_data_exists()
+
+    # build
     benchmark.build()
-    args = benchmark_args[benchmark.benchmark_name]
-    benchmark.run(args, 1)
+
+    # run
+    args = meta_data.benchmark_args
+    for iter in xrange(3):
+        benchmark.run(args, run_id=iter+1)
 
 
 def run_all_benchmarks():
@@ -181,7 +249,12 @@ def run_all_benchmarks():
         run_benchmark(benchmark)
 
 
+run_all_benchmarks()
+
+
 def visualize_benchmark(name, results):
+    print_bold("\nVisualizing: " + name)
+
     filtered = [
         result for result in results if result.benchmark_name == name
     ]
@@ -195,32 +268,44 @@ def visualize_benchmark(name, results):
     for stage in meta_data.stages:
         stage_id += 1
 
-        fig, ax = plt.subplots(1, 1, figsize=(10, 8))
+        num_entries = len(filtered)
+        y_size = (num_entries + 2) * 0.4    # = 40 pixel per row
+
+        fig, ax = plt.subplots(1, 1, figsize=(10, y_size))
+        plt.subplots_adjust(
+            bottom=1 / (num_entries+2),
+            top=1 - 1 / (num_entries+2)
+        )
+
         xs = []
         labels = []
         for result in filtered:
             rt = run_times[result][stage]
             xs.append(rt)
             labels.append(result.label)
-            print(rt)
+            # print(rt)
+
         ys = range(len(xs))
         ax.plot(xs, ys, 'o')
 
         ax.set_yticks(ys)
         ax.set_yticklabels(labels)
         ax.set_ylim(-0.5, len(labels) - 0.5)
+        ax.yaxis.tick_right()
 
         plot_file_name = os.path.join(
             "plots",
-            "{}_{}".format(benchmark_id[name], name),
+            "{:02d}_{}".format(benchmark_id[name], name),
             "{:02d}_{}_runtimes.png".format(stage_id, stage)
         )
         ensure_dir_exists(plot_file_name)
         plt.savefig(plot_file_name)
-    import IPython; IPython.embed()
+    #import IPython; IPython.embed()
+
 
 benchmarks_results = discover_benchmarks("results")
 visualize_benchmark("wordcount", benchmarks_results)
+
 
 def visualize_all_benchmarks():
     benchmarks = discover_benchmarks("benchmarks")

@@ -5,7 +5,10 @@ from __future__ import print_function
 import sys
 import time
 import re
-import gzip
+
+
+if len(sys.argv) != 2:
+    sys.exit(-1)
 
 
 class TimedContext(object):
@@ -19,7 +22,7 @@ class TimedContext(object):
 
 
 with TimedContext():
-    f = gzip.open(sys.argv[1], "r")
+    f = open(sys.argv[1], "r")
     all_data = f.read()
 
 with TimedContext():
@@ -32,5 +35,8 @@ with TimedContext():
     for w in words:
         word_counts[w] = word_counts.get(w, 0) + 1
 
-#for w, c in word_counts.iteritems():
-#    print(w, c)
+print(len(word_counts))
+word_checksum = 0
+for w, c in word_counts.iteritems():
+    word_checksum += c
+print(word_checksum)

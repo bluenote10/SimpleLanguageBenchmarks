@@ -11,33 +11,36 @@ import gzip
 
 
 num_words = 100000
-chars_to_write = 10000000
+chars_to_write = 100 * 1000 * 1000
 
 
 def random_word(length):
     return ''.join(random.choice(string.lowercase) for _ in xrange(length))
 
-random_words = [random_word(random.randint(1, 20)) for _ in xrange(num_words)]
 
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
-f = gzip.open("generated/random_words.txt.gz", "w")
-chars_written = 0
-chars_in_line = 0
+def generate(path):
+    random_words = [random_word(random.randint(1, 20)) for _ in xrange(num_words)]
 
-while chars_written < chars_to_write:
-    w = random.choice(random_words)
+    f = open(path, "w")
+    chars_written = 0
+    chars_in_line = 0
 
-    if chars_in_line == 0:
-        f.write(w)
-        chars_in_line += len(w)
-    elif chars_in_line + len(w) < 80:
-        f.write(" " + w)
-        chars_in_line += len(w)
-    else:
-        f.write("\n" + w)
-        chars_in_line = 0
+    while chars_written < chars_to_write:
+        w = random.choice(random_words)
 
-    chars_written += len(w)
+        if chars_in_line == 0:
+            f.write(w)
+            chars_in_line += len(w)
+            chars_written += len(w)
 
+        elif chars_in_line + len(w) < 80:
+            f.write(" " + w)
+            chars_in_line += len(w) + 1
+            chars_written += len(w) + 1
+
+        else:
+            f.write("\n" + w)
+            chars_in_line = len(w)
+            chars_written += len(w)
 
 
