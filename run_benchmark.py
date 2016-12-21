@@ -8,11 +8,14 @@ import glob
 import subprocess
 import errno
 import traceback
+import warnings
 
 import matplotlib.pyplot as plt
-import seaborn
-seaborn.set()
 
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    import seaborn
+    seaborn.set()
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -310,3 +313,29 @@ visualize_benchmark("wordcount", benchmarks_results)
 def visualize_all_benchmarks():
     benchmarks = discover_benchmarks("benchmarks")
 
+
+def read_file(filename):
+    with open(filename) as f:
+        text = f.read()
+    return text
+
+
+def write_file(filename, text):
+    with open(filename, 'w') as f:
+        f.write(text)
+
+
+def generate_markdown():
+
+    readme_text = read_file("templates/README.template.md")
+    write_file("README.md", readme_text)
+
+    benchmark_templates = [
+        "templates/01_wordcount.template.md"
+    ]
+    for benchmark_template in benchmark_templates:
+        text = read_file(benchmark_template)
+        out_path = os.path.basename(benchmark_template.replace(".template", ""))
+        write_file(out_path, text)
+
+generate_markdown()
