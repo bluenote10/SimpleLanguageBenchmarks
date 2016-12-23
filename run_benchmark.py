@@ -2,6 +2,7 @@
 
 from __future__ import division, print_function
 
+import argparse
 import os
 import re
 import glob
@@ -11,6 +12,8 @@ import traceback
 import warnings
 
 import matplotlib.pyplot as plt
+
+import pandas as pd
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -66,9 +69,9 @@ def wordcount_extractor(files):
 
     N = len(files)
     result = {
-        "IO": sum(runtimes_io) / N,
-        "Split": sum(runtimes_split) / N,
-        "Count": sum(runtimes_count) / N,
+        "IO": runtimes_io,
+        "Split": runtimes_split,
+        "Count": runtimes_count,
     }
     return result
 
@@ -107,6 +110,14 @@ benchmark_id = {
 
 
 class Benchmark(object):
+    """
+    Better names?
+        BenchmarkEntry
+        BenchmarkLocator
+        BenchmarkEntryLocator
+        ImplementationLocator
+        ResultLocator
+    """
 
     def __init__(self, language, benchmark_id, benchmark_name, impl_id, impl_name):
         self.language = language
@@ -197,6 +208,13 @@ class Benchmark(object):
         f = open(out_path, "w")
         f.write(stdout)
 
+    def __repr__(self):
+        return "BenchmarkEntry({}, {}, {})".format(
+            self.language,
+            self.benchmark_name,
+            self.impl_name
+        )
+
 
 def ensure_dir_exists(path):
     dir_path = os.path.dirname(path)
@@ -242,7 +260,7 @@ def run_benchmark(benchmark):
 
     # run
     args = meta_data.benchmark_args
-    for iter in xrange(3):
+    for iter in xrange(9):
         benchmark.run(args, run_id=iter+1)
 
 
@@ -250,9 +268,6 @@ def run_all_benchmarks():
     benchmarks = discover_benchmarks("benchmarks")
     for benchmark in benchmarks:
         run_benchmark(benchmark)
-
-
-run_all_benchmarks()
 
 
 def visualize_benchmark(name, results):
@@ -289,7 +304,7 @@ def visualize_benchmark(name, results):
             # print(rt)
 
         ys = range(len(xs))
-        ax.plot(xs, ys, 'o')
+        ax.plot(xs, ys, 'o', ms=5, alpha=0.5, markerfacecolor='None', markeredgewidth=1) # markeredgecolor='b'
 
         ax.set_yticks(ys)
         ax.set_yticklabels(labels)
@@ -306,8 +321,46 @@ def visualize_benchmark(name, results):
     #import IPython; IPython.embed()
 
 
-benchmarks_results = discover_benchmarks("results")
-visualize_benchmark("wordcount", benchmarks_results)
+def visualize_benchmark_html(name, benchmark_entries, extractor):
+    print_bold("\nVisualizing: " + name)
+
+    num_entries = len(benchmark_entries)
+
+    # The extractors return a dict of "stage => list of runtimes", i.e,
+    # run_times_per_stage becomes a "dict[benchmark_entry][stage] => list of runtimes"
+    run_times_per_stage = {
+        b_entry: extractor(b_entry.result_files) for b_entry in benchmark_entries
+    }
+    meta_data = benchmark_meta[name]
+
+    stage_id = 0
+    for stage in meta_data.stages:
+        stage_id += 1
+
+        rows = []
+        for b_entry in benchmark_entries:
+            run_times = run_times_per_stage[b_entry][stage]
+            row = {
+                "lang": b_entry.language,
+                "descr": "",
+            }
+            for i, value in enumerate(run_times):
+                row["run_{}".format(i+1)] = value
+            rows.append(row)
+
+        plot_csv = os.path.join(
+            "plots",
+            "{:02d}_{}".format(benchmark_id[name], name),
+            "{:02d}_{}_plot.csv".format(stage_id, stage)
+        )
+        ensure_dir_exists(plot_csv)
+
+        schema = ["lang", "descr"] + ["run_{}".format(i+1) for i in xrange(9)]
+        with open(plot_csv, "w") as f:
+            f.write(";".join(schema) + "\n")
+            for row in rows:
+                out_row = ";".join([str(row[field]) for field in schema])
+                f.write(out_row + "\n")
 
 
 def visualize_all_benchmarks():
@@ -338,4 +391,43 @@ def generate_markdown():
         out_path = os.path.basename(benchmark_template.replace(".template", ""))
         write_file(out_path, text)
 
-generate_markdown()
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Benchmark runner framework",
+        formatter_class=argparse.RawTextHelpFormatter)
+    parser.add_argument(
+        "--benchmark",
+        nargs="+",
+        help="Filter benchmarks to run by benchmark name(s).")
+    parser.add_argument(
+        "--lang",
+        nargs="+",
+        help="Filter benchmarks to run by programming language(s).")
+    parser.add_argument(
+        "-p", "--plot-only",
+        action='store_true',
+        help="Do not re-run benchmark, only visualize.")
+    parsed = parser.parse_args()
+    return parsed
+
+
+if __name__ == "__main__":
+
+    args = parse_args()
+
+    # TODO filter & determine affected benchmarks for visualization
+    if not args.plot_only:
+        run_all_benchmarks()
+
+    all_benchmarks_results = discover_benchmarks("results")
+
+    for benchmark_name in ["wordcount"]:
+        results = [
+            result for result in all_benchmarks_results if result.benchmark_name == benchmark_name
+        ]
+        # visualize_benchmark("wordcount", benchmarks_results)
+        extractor = benchmark_extractors[benchmark_name]
+        visualize_benchmark_html(benchmark_name, results, extractor)
+
+    generate_markdown()
