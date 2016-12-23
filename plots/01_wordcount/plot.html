@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <!-- <meta http-equiv="refresh" content="1"> -->
+    <title>Test</title>
+
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet">
+
+    <script type="text/javascript" src="http://livejs.com/live.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.4.0/d3.min.js"></script>
+
+    <style>
+      svg {
+        border: 1px solid #000;
+      }
+
+      .langlabels {
+        font-family: 'PT Sans', sans-serif;
+        font-size: 12px;
+      }
+
+      circle {
+        stroke: #124563;
+        fill: #12456355;
+      }
+
+      .tickasdf {
+        font-family: 'PT Sans', sans-serif;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script type="text/javascript">
+
+      function visualizeCsv(csvFile, selector) {
+        console.log("Hello world");
+        /*
+        d3.dsv(";")("data.csv", function (myArr) {
+          myArr.forEach(function (d) {
+            console.log(d.lang);
+          });
+        });
+        */
+
+        var markersize = 4;
+        var rowHeight = 20;
+        var colLang = "lang";
+
+        var margins = { l: 150, r: 30, t: 30, b: 60 };
+
+        /*
+        g.append("rect")
+          .attr("width", 100)
+          .attr("height", 100);
+        */
+
+        // https://github.com/d3/d3-request/blob/master/README.md#csv
+        // https://github.com/d3/d3-dsv#dsv_parse
+        function render(data) {
+
+          var numRows = data.length;
+          console.log(data);
+          console.log(numRows);
+
+          var height = (data.length * rowHeight) + margins.t + margins.b;
+          var canvasSizeOuter = { w: 800, h: height };
+          var canvasSizeInner = {
+            w: canvasSizeOuter.w - margins.l - margins.r,
+            h: canvasSizeOuter.h - margins.t - margins.b
+          };
+
+          // determine min/max
+          var min = +Number.MAX_VALUE;
+          var max = -Number.MAX_VALUE;
+          for (i = 0; i < numRows; i++) {
+            var row = data[i];
+            for (j = 0; j < 9; j++) {
+              var colname = "run_" + (j+1);
+              console.log(colname);
+              if (row[colname] < min) {
+                min = row[colname];
+              }
+              if (row[colname] > max) {
+                max = row[colname];
+              }
+            }
+          }
+
+          var xScale = d3
+            .scaleLinear()
+            .range([0, canvasSizeInner.w])
+            .domain([min, max]);
+          var yScale = d3
+            .scaleLinear()
+            .range([0, canvasSizeInner.h])
+            .domain([0, numRows-1]);
+
+          var svg = d3
+            .select(selector)
+            .append("svg")
+            .attr("width", canvasSizeOuter.w)
+            .attr("height", canvasSizeOuter.h);
+
+          var g = svg.append("g")
+            .attr("transform", "translate(" + margins.l + ", " + margins.r + ")");
+
+          // axis
+          var xAxis = d3.axisBottom()
+            .scale(xScale);
+
+          g.append("g")
+           .attr("transform", "translate(0," + (canvasSizeInner.h + rowHeight) + ")")
+           .call(xAxis);
+
+          // add langugage labels
+          var labels = g.selectAll(".labels")
+            .data(data)
+            .enter()
+            .append("text")
+            .attr("x", -margins.l)
+            .attr("y", function (d, i) { return yScale(i); })
+            .attr("class", "langlabels")
+            .text(function (d) { return d[colLang]; });
+
+          // plot run columns
+          for (i = 0; i < 9; i++) {
+            var colname = "run_" + (i+1);
+            g.selectAll("circlerun" + i)
+             .data(data)
+             .enter()
+             .append("circle")
+             .attr("cx", function (d, i) { return xScale(d[colname]); })
+             .attr("cy", function (d, i) { return yScale(i); })
+             .attr("r", markersize)
+             .attr("class", "circlerun circlerun" + i);
+          }
+        }
+
+        d3.request(csvFile)
+          .mimeType("text/csv")
+          .response(function(xhr) { return d3.dsvFormat(";").parse(xhr.responseText); })
+          .get(render);
+      }
+
+      visualizeCsv("01_IO_plot.csv", "#plot1");
+visualizeCsv("02_Split_plot.csv", "#plot2");
+visualizeCsv("03_Count_plot.csv", "#plot3");
+      
+    </script>
+
+    <div id="plot1"></div>
+<div id="plot2"></div>
+<div id="plot3"></div>
+
+  </body>
+</html>

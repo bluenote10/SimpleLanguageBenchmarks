@@ -11,6 +11,8 @@ import errno
 import traceback
 import warnings
 
+from jinja2 import Environment, FileSystemLoader
+
 import matplotlib.pyplot as plt
 
 import pandas as pd
@@ -79,6 +81,21 @@ def wordcount_extractor(files):
 benchmark_extractors = {
     "wordcount": wordcount_extractor,
 }
+
+
+def plot_path(benchmark_name):
+    return os.path.join(
+        "plots",
+        "{:02d}_{}".format(benchmark_id[benchmark_name], benchmark_name),
+    )
+
+
+def plot_csv_path(benchmark_name, stage_id, stage):
+    return os.path.join(
+        "plots",
+        "{:02d}_{}".format(benchmark_id[benchmark_name], benchmark_name),
+        "{:02d}_{}_plot.csv".format(stage_id, stage)
+    )
 
 
 class Wordcount(object):
@@ -348,11 +365,7 @@ def visualize_benchmark_html(name, benchmark_entries, extractor):
                 row["run_{}".format(i+1)] = value
             rows.append(row)
 
-        plot_csv = os.path.join(
-            "plots",
-            "{:02d}_{}".format(benchmark_id[name], name),
-            "{:02d}_{}_plot.csv".format(stage_id, stage)
-        )
+        plot_csv = plot_csv_path(name, stage_id, stage)
         ensure_dir_exists(plot_csv)
 
         schema = ["lang", "descr"] + ["run_{}".format(i+1) for i in xrange(9)]
@@ -361,6 +374,35 @@ def visualize_benchmark_html(name, benchmark_entries, extractor):
             for row in rows:
                 out_row = ";".join([str(row[field]) for field in schema])
                 f.write(out_row + "\n")
+
+    # prepare template code
+    plot_calls = []
+    divs = []
+    stage_id = 0
+    for stage in meta_data.stages:
+        stage_id += 1
+
+        plot_csv_basename = os.path.basename(plot_csv_path(name, stage_id, stage))
+        plot_calls += [
+            'visualizeCsv("{}", "#plot{}");'.format(
+                plot_csv_basename,
+                stage_id
+            )
+        ]
+        divs += [
+            '<div id="plot{}"></div>'.format(stage_id)
+        ]
+
+    env = Environment(loader=FileSystemLoader('templates'))
+    template = env.get_template('plot.html')
+    html = template.render(
+        plot_calls="\n".join(plot_calls),
+        divs = "\n".join(divs),
+    )
+
+    out_path = os.path.join(plot_path(name), "plot.html")
+    with open(out_path, "w") as f:
+        f.write(html)
 
 
 def visualize_all_benchmarks():
