@@ -1,16 +1,12 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
+  <head><meta charset="utf-8">
     <!-- <meta http-equiv="refresh" content="1"> -->
     <title>Test</title>
 
     <link href="https://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet">
 
-    <script type="text/javascript" src="http://livejs.com/live.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.4.0/d3.min.js"></script>
-
-    <style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.4.0/d3.min.js"></script><style>
       svg {
         border: 1px solid #000;
       }
@@ -37,13 +33,6 @@
 
       function visualizeCsv(csvFile, selector) {
         console.log("Hello world");
-        /*
-        d3.dsv(";")("data.csv", function (myArr) {
-          myArr.forEach(function (d) {
-            console.log(d.lang);
-          });
-        });
-        */
 
         var markersize = 4;
         var rowHeight = 20;
@@ -51,14 +40,6 @@
 
         var margins = { l: 150, r: 30, t: 30, b: 60 };
 
-        /*
-        g.append("rect")
-          .attr("width", 100)
-          .attr("height", 100);
-        */
-
-        // https://github.com/d3/d3-request/blob/master/README.md#csv
-        // https://github.com/d3/d3-dsv#dsv_parse
         function render(data) {
 
           var numRows = data.length;
@@ -139,21 +120,29 @@
           }
         }
 
+        // https://github.com/d3/d3-request/blob/master/README.md#csv
+        // https://github.com/d3/d3-dsv#dsv_parse
         d3.request(csvFile)
           .mimeType("text/csv")
           .response(function(xhr) { return d3.dsvFormat(";").parse(xhr.responseText); })
           .get(render);
       }
 
-      visualizeCsv("01_IO_plot.csv", "#plot1");
-visualizeCsv("02_Split_plot.csv", "#plot2");
-visualizeCsv("03_Count_plot.csv", "#plot3");
+      visualizeCsv("01_Total_plot.csv", "#plot1");
+      visualizeCsv("02_IO_plot.csv", "#plot2");
+      visualizeCsv("03_Split_plot.csv", "#plot3");
+      visualizeCsv("04_Count_plot.csv", "#plot4");
       
+
     </script>
 
+    <h1>Benchmark Results</h1>
+
     <div id="plot1"></div>
-<div id="plot2"></div>
-<div id="plot3"></div>
+    <div id="plot2"></div>
+    <div id="plot3"></div>
+    <div id="plot4"></div>
+    
 
   </body>
 </html>

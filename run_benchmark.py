@@ -48,41 +48,6 @@ def print_bold(*args):
     print(AnsiColors.ENDC, end="")
 
 
-def wordcount_extractor(files):
-    runtimes_io = []
-    runtimes_split = []
-    runtimes_count = []
-    for fn in files:
-        with open(fn) as f:
-            try:
-                t1 = float(f.readline())
-                t2 = float(f.readline())
-                t3 = float(f.readline())
-                runtimes_io.append(t1)
-                runtimes_split.append(t2)
-                runtimes_count.append(t3)
-            except ValueError, e:
-                print(
-                    AnsiColors.FAIL +
-                    "Output did not fulfil expected format:" +
-                    AnsiColors.ENDC
-                )
-                print(traceback.format_stack())
-
-    N = len(files)
-    result = {
-        "IO": runtimes_io,
-        "Split": runtimes_split,
-        "Count": runtimes_count,
-    }
-    return result
-
-
-benchmark_extractors = {
-    "wordcount": wordcount_extractor,
-}
-
-
 def plot_path(benchmark_name):
     return os.path.join(
         "plots",
@@ -102,7 +67,7 @@ class Wordcount(object):
 
     _datafile = os.path.abspath("data/generated/random_words.txt")
 
-    stages = ["IO", "Split", "Count"]
+    stages = ["Total", "IO", "Split", "Count"]
     benchmark_args = [_datafile]
 
     @staticmethod
@@ -114,7 +79,44 @@ class Wordcount(object):
             from data.generate_text import generate
             generate(Wordcount._datafile)
 
+    @staticmethod
+    def result_extractor(files):
+        # TODO: should we do the result validation here (when collecting the runtimes,
+        # TODO: better name would probably by "extract_runtimes") or should there be
+        # TODO: a speparate "result_validator"? Probably the latter...
+        runtimes_io = []
+        runtimes_split = []
+        runtimes_count = []
+        for fn in files:
+            with open(fn) as f:
+                try:
+                    t1 = float(f.readline())
+                    t2 = float(f.readline())
+                    t3 = float(f.readline())
+                    runtimes_io.append(t1)
+                    runtimes_split.append(t2)
+                    runtimes_count.append(t3)
+                except ValueError, e:
+                    print(
+                        AnsiColors.FAIL +
+                        "Output did not fulfil expected format:" +
+                        AnsiColors.ENDC
+                    )
+                    print(traceback.format_stack())
 
+        N = len(files)
+        runtimes_total = [
+            runtimes_io[i] + runtimes_split[i] + runtimes_count[i]
+            for i in xrange(N)
+        ]
+
+        result = {
+            "Total": runtimes_total,
+            "IO": runtimes_io,
+            "Split": runtimes_split,
+            "Count": runtimes_count,
+        }
+        return result
 
 
 benchmark_meta = {
@@ -244,13 +246,16 @@ def ensure_dir_exists(path):
             raise
 
 
-def discover_benchmarks(prefix):
-    impls = []
+def discover_benchmark_entries(prefix):
+    entries = []
 
-    implementation_paths = glob.glob(prefix + '/*/*/*')
+    entry_paths = sorted(
+        glob.glob(prefix + '/*/*/*'),
+        key=lambda s: s.lower()
+    )
 
-    for impl_path in implementation_paths:
-        m = re.match(prefix + "/(.*)/(\d+)_(.*)/(\d+)_(.*)", impl_path)
+    for path in entry_paths:
+        m = re.match(prefix + "/(.*)/(\d+)_(.*)/(\d+)_(.*)", path)
         if m is not None:
             language = m.group(1)
             benchmark_id = m.group(2)
@@ -258,11 +263,11 @@ def discover_benchmarks(prefix):
             impl_id = m.group(4)
             impl_name = m.group(5)
             # print(language, benchmark_name, impl_name)
-            impls += [
+            entries += [
                 Benchmark(language, benchmark_id, benchmark_name, impl_id, impl_name)
             ]
 
-    return impls
+    return entries
 
 
 def run_benchmark(benchmark):
@@ -282,7 +287,7 @@ def run_benchmark(benchmark):
 
 
 def run_all_benchmarks():
-    benchmarks = discover_benchmarks("benchmarks")
+    benchmarks = discover_benchmark_entries("benchmarks")
     for benchmark in benchmarks:
         run_benchmark(benchmark)
 
@@ -338,7 +343,7 @@ def visualize_benchmark(name, results):
     #import IPython; IPython.embed()
 
 
-def visualize_benchmark_html(name, benchmark_entries, extractor):
+def visualize_benchmark_html(name, benchmark_entries, meta_data):
     print_bold("\nVisualizing: " + name)
 
     num_entries = len(benchmark_entries)
@@ -346,9 +351,8 @@ def visualize_benchmark_html(name, benchmark_entries, extractor):
     # The extractors return a dict of "stage => list of runtimes", i.e,
     # run_times_per_stage becomes a "dict[benchmark_entry][stage] => list of runtimes"
     run_times_per_stage = {
-        b_entry: extractor(b_entry.result_files) for b_entry in benchmark_entries
+        b_entry: meta_data.result_extractor(b_entry.result_files) for b_entry in benchmark_entries
     }
-    meta_data = benchmark_meta[name]
 
     stage_id = 0
     for stage in meta_data.stages:
@@ -396,8 +400,8 @@ def visualize_benchmark_html(name, benchmark_entries, extractor):
     env = Environment(loader=FileSystemLoader('templates'))
     template = env.get_template('plot.html')
     html = template.render(
-        plot_calls="\n".join(plot_calls),
-        divs = "\n".join(divs),
+        plot_calls=plot_calls,
+        divs=divs,
     )
 
     out_path = os.path.join(plot_path(name), "plot.html")
@@ -406,7 +410,7 @@ def visualize_benchmark_html(name, benchmark_entries, extractor):
 
 
 def visualize_all_benchmarks():
-    benchmarks = discover_benchmarks("benchmarks")
+    benchmarks = discover_benchmark_entries("benchmarks")
 
 
 def read_file(filename):
@@ -449,7 +453,7 @@ def parse_args():
     parser.add_argument(
         "-p", "--plot-only",
         action='store_true',
-        help="Do not re-run benchmark, only visualize.")
+        help="Do not re-run benchmarks, only visualize.")
     parsed = parser.parse_args()
     return parsed
 
@@ -462,14 +466,15 @@ if __name__ == "__main__":
     if not args.plot_only:
         run_all_benchmarks()
 
-    all_benchmarks_results = discover_benchmarks("results")
+    all_benchmarks_results = discover_benchmark_entries("results")
 
     for benchmark_name in ["wordcount"]:
         results = [
             result for result in all_benchmarks_results if result.benchmark_name == benchmark_name
         ]
         # visualize_benchmark("wordcount", benchmarks_results)
-        extractor = benchmark_extractors[benchmark_name]
-        visualize_benchmark_html(benchmark_name, results, extractor)
+        meta_data = benchmark_meta[benchmark_name]
+        visualize_benchmark_html(benchmark_name, results, meta_data)
 
     generate_markdown()
+
