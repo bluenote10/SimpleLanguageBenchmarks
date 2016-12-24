@@ -13,14 +13,8 @@ import warnings
 
 from jinja2 import Environment, FileSystemLoader
 
-import matplotlib.pyplot as plt
-
 import pandas as pd
 
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore")
-    import seaborn
-    seaborn.set()
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -292,57 +286,6 @@ def run_all_benchmarks():
         run_benchmark(benchmark)
 
 
-def visualize_benchmark(name, results):
-    print_bold("\nVisualizing: " + name)
-
-    filtered = [
-        result for result in results if result.benchmark_name == name
-    ]
-    extractor = benchmark_extractors[name]
-    run_times = {
-        result: extractor(result.result_files) for result in filtered
-    }
-    meta_data = benchmark_meta[name]
-
-    stage_id = 0
-    for stage in meta_data.stages:
-        stage_id += 1
-
-        num_entries = len(filtered)
-        y_size = (num_entries + 2) * 0.4    # = 40 pixel per row
-
-        fig, ax = plt.subplots(1, 1, figsize=(10, y_size))
-        plt.subplots_adjust(
-            bottom=1 / (num_entries+2),
-            top=1 - 1 / (num_entries+2)
-        )
-
-        xs = []
-        labels = []
-        for result in filtered:
-            rt = run_times[result][stage]
-            xs.append(rt)
-            labels.append(result.label)
-            # print(rt)
-
-        ys = range(len(xs))
-        ax.plot(xs, ys, 'o', ms=5, alpha=0.5, markerfacecolor='None', markeredgewidth=1) # markeredgecolor='b'
-
-        ax.set_yticks(ys)
-        ax.set_yticklabels(labels)
-        ax.set_ylim(-0.5, len(labels) - 0.5)
-        ax.yaxis.tick_right()
-
-        plot_file_name = os.path.join(
-            "plots",
-            "{:02d}_{}".format(benchmark_id[name], name),
-            "{:02d}_{}_runtimes.png".format(stage_id, stage)
-        )
-        ensure_dir_exists(plot_file_name)
-        plt.savefig(plot_file_name)
-    #import IPython; IPython.embed()
-
-
 def visualize_benchmark_html(name, benchmark_entries, meta_data):
     print_bold("\nVisualizing: " + name)
 
@@ -472,7 +415,6 @@ if __name__ == "__main__":
         results = [
             result for result in all_benchmarks_results if result.benchmark_name == benchmark_name
         ]
-        # visualize_benchmark("wordcount", benchmarks_results)
         meta_data = benchmark_meta[benchmark_name]
         visualize_benchmark_html(benchmark_name, results, meta_data)
 
