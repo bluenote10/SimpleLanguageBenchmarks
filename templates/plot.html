@@ -64,10 +64,14 @@
   <body>
 
     <div class="container">
-      <h1>Benchmark Results</h1>
+      {# <h1>Benchmark Results</h1> #}
 
+      {{ description }}
+
+      <h3>Results</h3>
+      
       {% for title, div in plot_htmls -%}
-      <h3>Runtime: {{title}}</h3>
+      <h4>Runtime: {{title}}</h4>
       {{ div }}
       {% endfor %}
     </div>

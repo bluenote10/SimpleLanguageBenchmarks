@@ -48,15 +48,38 @@
   <body>
 
     <div class="container">
-      <h1>Benchmark Results</h1>
+      
 
-      <h3>Runtime: Total</h3>
+      <h2>Benchmark: Wordcount</h2>
+<h3>Task</h3>
+<p>Perform a simple word count on a text file.
+To isolate I/O from other aspects, all solutions should implement the following stages:</p>
+<ul>
+<li><strong>IO</strong>: Read entire file into memory (one large string).</li>
+<li><strong>Split</strong>: Split string on split characters: <code>\n</code> and <code></code> (single space)</li>
+<li><strong>Count</strong>: Iterate over words to build a hash map with counts.</li>
+</ul>
+<p>Benchmark Aspects: Hash maps, basic string operations, allocation</p>
+<h4>Input</h4>
+<ul>
+<li>Path of text file to read.</li>
+</ul>
+<h4>Control Output</h4>
+<p>After writing the stage runtimes to STDOUT, the implementations should print:</p>
+<ul>
+<li>Size of the word map</li>
+<li>Sum of the counts in the map</li>
+</ul>
+
+      <h3>Results</h3>
+      
+      <h4>Runtime: Total</h4>
       <div id="plot1"></div>
-      <h3>Runtime: IO</h3>
+      <h4>Runtime: IO</h4>
       <div id="plot2"></div>
-      <h3>Runtime: Split</h3>
+      <h4>Runtime: Split</h4>
       <div id="plot3"></div>
-      <h3>Runtime: Count</h3>
+      <h4>Runtime: Count</h4>
       <div id="plot4"></div>
       
     </div>

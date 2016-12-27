@@ -10,7 +10,9 @@ import subprocess
 import errno
 import traceback
 import time
+import textwrap
 
+import markdown
 from jinja2 import Environment, FileSystemLoader
 
 import pandas as pd
@@ -72,6 +74,33 @@ def plot_csv_path(benchmark_name, stage_id, stage):
 
 
 class Wordcount(object):
+
+    description = textwrap.dedent("""\
+    ## Benchmark: Wordcount
+
+    ### Task
+
+    Perform a simple word count on a text file.
+    To isolate I/O from other aspects, all solutions should implement the following stages:
+
+    - **IO**: Read entire file into memory (one large string).
+    - **Split**: Split string on split characters: `\\n` and ` ` (single space)
+    - **Count**: Iterate over words to build a hash map with counts.
+
+    Benchmark Aspects: Hash maps, basic string operations, allocation
+
+    #### Input
+
+    - Path of text file to read.
+
+    #### Control Output
+
+    After writing the stage runtimes to STDOUT, the implementations should print:
+
+    - Size of the word map
+    - Sum of the counts in the map
+
+    """)
 
     _datafile = {
         Sizes.S: os.path.abspath("data/generated/random_words_S.txt"),
@@ -425,9 +454,12 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
             (stage, div)
         ]
 
+    html_description = markdown.markdown(meta_data.description)
+
     env = Environment(loader=FileSystemLoader('templates'))
     template = env.get_template('plot.html')
     html = template.render(
+        description=html_description,
         plot_calls=plot_calls,
         plot_htmls=plot_htmls,
     )
