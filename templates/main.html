@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {#- http://jinja.pocoo.org/docs/dev/templates/ -#}
+    <meta charset="utf-8">
+    <title>Simple Language Benchmarks</title>
+
+    {{ common_header | indent(4) }}
+
+  </head>
+
+
+  <body>
+
+    {{ navbar | indent(4) }}
+
+    <div class="container">
+
+      <h3>Benchmarks</h3>
+
+      <ol>
+        {% for name, url in sub_pages %}
+        <li><a href="{{ url }}">{{ name }}</a></li>
+        {% endfor %}
+      </ol>
+
+      <h3>System Specs</h3>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for k, v in specs %}
+          <tr>
+            <td>{{ k }}</td>
+            <td>{{ v }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    <script src="../js/plotting.js"></script>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  </body>
+</html>

@@ -12,6 +12,7 @@ import traceback
 import time
 import textwrap
 import yaml
+import platform
 
 import markdown
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
@@ -478,8 +479,12 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
     )
     benchmark_template = env.get_template('benchmark.html')
 
-    common_header = env.get_template('common_header.html').render()
-    navbar = env.get_template('navbar.html').render()
+    common_header = env.get_template('common_header.html').render(
+        url_resources="..",
+    )
+    navbar = env.get_template('navbar.html').render(
+        url_home="../index.html",
+    )
 
     html = benchmark_template.render(
         common_header=common_header,
@@ -494,6 +499,65 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
     out_path = os.path.join(html_path_benchmark(name), "index.html")
     with open(out_path, "w") as f:
         f.write(html)
+
+
+def visualize_summary_html():
+    print_bold("\nVisualizing summary")
+
+    sub_pages_folder = sorted(glob.glob(
+        html_path() + "/*/index.html"
+    ))
+    sub_pages = []
+    for sub_page in sub_pages_folder:
+        folder_name = sub_page.split(os.path.sep)[-2]
+        idx, name = folder_name.split("_")
+        human_name = benchmark_meta[name].title
+        relative_url = '/'.join(sub_page.split(os.path.sep)[-2:])
+        sub_pages.append((human_name, relative_url))
+
+    # compile html
+    # html_description = markdown.markdown(meta_data.description)
+
+    env = Environment(
+        loader=FileSystemLoader('templates'),
+        undefined=StrictUndefined,
+    )
+    benchmark_template = env.get_template('main.html')
+
+    common_header = env.get_template('common_header.html').render(
+        url_resources=".",
+    )
+    navbar = env.get_template('navbar.html').render(
+        url_home="index.html",
+    )
+
+    html = benchmark_template.render(
+        common_header=common_header,
+        navbar=navbar,
+        sub_pages=sub_pages,
+        specs=get_specs()
+    )
+
+    out_path = os.path.join(html_path(), "index.html")
+    with open(out_path, "w") as f:
+        f.write(html)
+
+
+def get_specs():
+    # TODO: expand and robustify
+    def get_mem():
+        meminfo = open('/proc/meminfo').read()
+        matched = re.search(r'^MemTotal:\s+(\d+)', meminfo)
+        if matched:
+            mem_total_kB = int(matched.groups()[0])
+            return "{:.1f} MB".format(mem_total_kB / 1024)
+
+    specs = [
+        ("OS", platform.system()),
+        ("Kernel", platform.release()),
+        ("Memory", get_mem())
+    ]
+    return specs
 
 
 def read_file(filename):
@@ -559,3 +623,4 @@ if __name__ == "__main__":
         meta_data = benchmark_meta[benchmark_name]
         visualize_benchmark_html(benchmark_name, results, meta_data)
 
+    visualize_summary_html()
