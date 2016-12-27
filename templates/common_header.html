@@ -1,0 +1,20 @@
+<link href="https://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.4.0/d3.min.js"></script>
+{%- if useLiveJS | default(false) -%}
+<script type="text/javascript" src="http://livejs.com/live.js"></script>
+{%- endif -%}
+
+<!-- Bootstrap: Customized Theme -->
+<link rel="stylesheet" href="../resources/bootstrap.min.css">
+{#
+<!-- Bootstrap: Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<!-- Bootstrap: Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+#}
+
+<!-- Bootstrap post modifications; required by https://getbootstrap.com/components/#navbar-fixed-top -->
+<style>
+  body { padding-top: 70px; }
+</style>

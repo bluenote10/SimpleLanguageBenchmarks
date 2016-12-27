@@ -14,7 +14,7 @@ import textwrap
 import yaml
 
 import markdown
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 import pandas as pd
 
@@ -472,9 +472,18 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
     # compile html
     html_description = markdown.markdown(meta_data.description)
 
-    env = Environment(loader=FileSystemLoader('templates'))
-    template = env.get_template('benchmark.html')
-    html = template.render(
+    env = Environment(
+        loader=FileSystemLoader('templates'),
+        undefined=StrictUndefined,
+    )
+    benchmark_template = env.get_template('benchmark.html')
+
+    common_header = env.get_template('common_header.html').render()
+    navbar = env.get_template('navbar.html').render()
+
+    html = benchmark_template.render(
+        common_header=common_header,
+        navbar=navbar,
         title=meta_data.title,
         description=html_description,
         impl_locs=impl_locs,
@@ -549,6 +558,4 @@ if __name__ == "__main__":
         ]
         meta_data = benchmark_meta[benchmark_name]
         visualize_benchmark_html(benchmark_name, results, meta_data)
-
-    generate_markdown()
 
