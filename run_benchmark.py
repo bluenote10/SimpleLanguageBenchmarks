@@ -201,7 +201,7 @@ class Benchmark(object):
     @property
     def impl_path(self):
         return os.path.join(
-            "benchmarks",
+            "implementations",
             self.language,
             "{:02d}_{}".format(self.benchmark_id, self.benchmark_name),
             "{:02d}_{}".format(self.impl_id, self.impl_name)
@@ -469,10 +469,6 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
         f.write(html)
 
 
-def visualize_all_benchmarks():
-    benchmarks = discover_benchmark_entries("benchmarks")
-
-
 def read_file(filename):
     with open(filename) as f:
         text = f.read()
@@ -524,7 +520,7 @@ if __name__ == "__main__":
 
     # TODO filter & determine affected benchmarks for visualization
     if not args.plot_only:
-        benchmark_entries = discover_benchmark_entries("benchmarks")  # TODO: rename to implementations
+        benchmark_entries = discover_benchmark_entries("implementations")  # TODO: rename to implementations
         run_all_benchmarks(benchmark_entries)
 
     all_benchmarks_results = discover_benchmark_entries("results")
