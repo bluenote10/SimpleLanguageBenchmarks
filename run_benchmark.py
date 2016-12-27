@@ -65,22 +65,27 @@ class Sizes(object):
             ])
 
 
-def plot_path(benchmark_name):
+def html_path():
+    return "html"
+
+
+def html_path_benchmark(benchmark_name):
     return os.path.join(
-        "plots",
+        html_path(),
         "{:02d}_{}".format(benchmark_id[benchmark_name], benchmark_name),
     )
 
 
-def plot_csv_path(benchmark_name, stage_id, stage):
+def html_path_stage_csv(benchmark_name, stage_id, stage):
     return os.path.join(
-        "plots",
-        "{:02d}_{}".format(benchmark_id[benchmark_name], benchmark_name),
-        "{:02d}_{}_plot.csv".format(stage_id, stage)
+        html_path_benchmark(benchmark_name),
+        "{:02d}_{}_plot.csv".format(stage_id, stage),
     )
 
 
 class Wordcount(object):
+
+    title = "Wordcount"
 
     description = textwrap.dedent("""\
     ## Benchmark: Wordcount
@@ -341,26 +346,6 @@ def discover_benchmark_entries(prefix):
     return entries
 
 
-"""
-def run_benchmark(benchmark):
-    print_bold("\nBenchmarking: {} / {} / {}".format(
-        benchmark.language, benchmark.benchmark_name, benchmark.impl_name
-    ))
-
-    # check data
-    meta_data = benchmark_meta[benchmark.benchmark_name]
-    meta_data.ensure_data_exists()
-
-    # build
-    benchmark.build()
-
-    # run
-    args = meta_data.benchmark_args
-    for iter in xrange(9):
-        benchmark.run(args, run_id=iter+1)
-"""
-
-
 def run_all_benchmarks(benchmark_entries):
 
     # data generation
@@ -444,7 +429,7 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
                 row["run_{}".format(i+1)] = value
             rows.append(row)
 
-        plot_csv = plot_csv_path(name, stage_id, stage)
+        plot_csv = html_path_stage_csv(name, stage_id, stage)
         ensure_dir_exists(plot_csv)
 
         schema = ["lang", "descr"] + ["run_{}".format(i+1) for i in xrange(9)]
@@ -461,7 +446,7 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
     for stage in meta_data.stages:
         stage_id += 1
 
-        plot_csv_basename = os.path.basename(plot_csv_path(name, stage_id, stage))
+        plot_csv_basename = os.path.basename(html_path_stage_csv(name, stage_id, stage))
         plot_calls += [
             'visualizeCsv("{}", "#plot{}");'.format(
                 plot_csv_basename,
@@ -488,15 +473,16 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
     html_description = markdown.markdown(meta_data.description)
 
     env = Environment(loader=FileSystemLoader('templates'))
-    template = env.get_template('plot.html')
+    template = env.get_template('benchmark.html')
     html = template.render(
+        title=meta_data.title,
         description=html_description,
         impl_locs=impl_locs,
         plot_calls=plot_calls,
         plot_htmls=plot_htmls,
     )
 
-    out_path = os.path.join(plot_path(name), "plot.html")
+    out_path = os.path.join(html_path_benchmark(name), "index.html")
     with open(out_path, "w") as f:
         f.write(html)
 
@@ -552,7 +538,7 @@ if __name__ == "__main__":
 
     # TODO filter & determine affected benchmarks for visualization
     if not args.plot_only:
-        benchmark_entries = discover_benchmark_entries("implementations")  # TODO: rename to implementations
+        benchmark_entries = discover_benchmark_entries("implementations")
         run_all_benchmarks(benchmark_entries)
 
     all_benchmarks_results = discover_benchmark_entries("results")

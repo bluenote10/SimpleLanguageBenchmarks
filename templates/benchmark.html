@@ -4,7 +4,7 @@
     {#- http://jinja.pocoo.org/docs/dev/templates/ -#}
     <meta charset="utf-8">
     <!-- <meta http-equiv="refresh" content="1"> -->
-    <title>Test</title>
+    <title>Simple Language Benchmarks - {{ title }}</title>
 
     <link href="https://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet">
 
@@ -13,11 +13,12 @@
     <script type="text/javascript" src="http://livejs.com/live.js"></script>
     {%- endif -%}
 
-    <link rel="stylesheet" href="../../resources/bootstrap.min.css">
+    <!-- Bootstrap: Customized Theme -->
+    <link rel="stylesheet" href="../resources/bootstrap.min.css">
     {#
-    <!-- Latest compiled and minified CSS -->
+    <!-- Bootstrap: Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <!-- Optional theme -->
+    <!-- Bootstrap: Optional theme -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     #}
 
@@ -131,121 +132,18 @@
       {% endfor %}
     </div>
 
-    <script type="text/javascript">
-
-      function visualizeCsv(csvFile, selector) {
-        console.log("Rendering " + csvFile + " into " + selector);
-
-        var numSizes = 3;
-        var numRuns = 3;
-
-        var markersize = 4;
-        var rowHeight = 20;
-        var colLang = "lang";
-
-        var margins = { l: 150, r: 30, t: 30, b: 60 };
-
-        var clientBoundingRect = document.querySelector(selector).getBoundingClientRect()
-        var widthRecommended = clientBoundingRect.right - clientBoundingRect.left;
-        console.log("Recommended width: " + widthRecommended)
-
-        function render(data) {
-
-          var numRows = data.length;
-          console.log(data);
-          console.log(numRows);
-
-          var height = (data.length * rowHeight) + margins.t + margins.b;
-          var canvasSizeOuter = { w: widthRecommended, h: height };
-          var canvasSizeInner = {
-            w: canvasSizeOuter.w - margins.l - margins.r,
-            h: canvasSizeOuter.h - margins.t - margins.b
-          };
-
-          // determine min/max
-          var min = +Number.MAX_VALUE;
-          var max = -Number.MAX_VALUE;
-          for (i = 0; i < numRows; i++) {
-            var row = data[i];
-            for (j = 0; j < numSizes * numRuns; j++) {
-              var colname = "run_" + (j+1);
-              if (row[colname] < min) {
-                min = row[colname];
-              }
-              if (row[colname] > max) {
-                max = row[colname];
-              }
-            }
-          }
-
-          var xScale = d3
-            .scaleLinear()
-            .range([0, canvasSizeInner.w])
-            .domain([min, max]);
-          var yScale = d3
-            .scaleLinear()
-            .range([0, canvasSizeInner.h])
-            .domain([0, numRows-1]);
-
-          var svg = d3
-            .select(selector)
-            .append("svg")
-            .attr("width", canvasSizeOuter.w)
-            .attr("height", canvasSizeOuter.h);
-
-          var g = svg.append("g")
-            .attr("transform", "translate(" + margins.l + ", " + margins.r + ")");
-
-          // axis
-          var xAxis = d3.axisBottom()
-            .scale(xScale);
-
-          g.append("g")
-           .attr("transform", "translate(0," + (canvasSizeInner.h + rowHeight) + ")")
-           .call(xAxis);
-
-          // add langugage labels
-          var labels = g.selectAll(".labels")
-            .data(data)
-            .enter()
-            .append("text")
-            .attr("x", -margins.l)
-            .attr("y", function (d, i) { return yScale(i); })
-            .attr("class", "langlabels")
-            .text(function (d) { return d[colLang]; });
-
-          // plot run columns
-          for (i = 0; i < numSizes * numRuns; i++) {
-            var colname = "run_" + (i+1);
-            g.selectAll("circlerun" + i)
-             .data(data)
-             .enter()
-             .append("circle")
-             .attr("cx", function (d, i) { return xScale(d[colname]); })
-             .attr("cy", function (d, i) { return yScale(i); })
-             .attr("r", markersize)
-             .attr("class", "circlerun circlerun" + (Math.floor(i / numRuns) + 1));
-          }
-        }
-
-        // https://github.com/d3/d3-request/blob/master/README.md#csv
-        // https://github.com/d3/d3-dsv#dsv_parse
-        d3.request(csvFile)
-          .mimeType("text/csv")
-          .response(function(xhr) { return d3.dsvFormat(";").parse(xhr.responseText); })
-          .get(render);
-      }
-
-      {% for plot_call in plot_calls -%}
-      {{ plot_call }}
-      {% endfor %}
-
-    </script>
+    <script src="../js/plotting.js"></script>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Bootstrap -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+      {% for plot_call in plot_calls -%}
+      {{ plot_call }}
+      {% endfor %}
+    </script>
 
   </body>
 </html>
