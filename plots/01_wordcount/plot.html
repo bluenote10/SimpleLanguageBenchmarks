@@ -6,7 +6,13 @@
 
     <link href="https://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.4.0/d3.min.js"></script><style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.4.0/d3.min.js"></script><link rel="stylesheet" href="../../resources/bootstrap.min.css">
+    
+
+    <!-- Fork me on Github -->
+    <a href="https://github.com/bluenote10"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
+
+    <style>
       svg {
         border: 1px solid #000;
       }
@@ -29,16 +35,30 @@
   </head>
 
   <body>
+    <div class="container">
+      <h1>Benchmark Results</h1>
+
+      <div id="plot1"></div>
+      <div id="plot2"></div>
+      <div id="plot3"></div>
+      <div id="plot4"></div>
+      
+    </div>
+
     <script type="text/javascript">
 
       function visualizeCsv(csvFile, selector) {
-        console.log("Hello world");
+        console.log("Rendering " + csvFile + " into " + selector);
 
         var markersize = 4;
         var rowHeight = 20;
         var colLang = "lang";
 
         var margins = { l: 150, r: 30, t: 30, b: 60 };
+
+        var clientBoundingRect = document.querySelector(selector).getBoundingClientRect()
+        var widthRecommended = clientBoundingRect.right - clientBoundingRect.left;
+        console.log("Recommended width: " + widthRecommended)
 
         function render(data) {
 
@@ -47,7 +67,7 @@
           console.log(numRows);
 
           var height = (data.length * rowHeight) + margins.t + margins.b;
-          var canvasSizeOuter = { w: 800, h: height };
+          var canvasSizeOuter = { w: widthRecommended, h: height };
           var canvasSizeInner = {
             w: canvasSizeOuter.w - margins.l - margins.r,
             h: canvasSizeOuter.h - margins.t - margins.b
@@ -136,13 +156,10 @@
 
     </script>
 
-    <h1>Benchmark Results</h1>
-
-    <div id="plot1"></div>
-    <div id="plot2"></div>
-    <div id="plot3"></div>
-    <div id="plot4"></div>
-    
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
   </body>
 </html>

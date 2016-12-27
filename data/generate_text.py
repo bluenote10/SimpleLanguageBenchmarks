@@ -10,15 +10,14 @@ import string
 import gzip
 
 
-num_words = 100000
-chars_to_write = 100 * 1000 * 1000
-
-
 def random_word(length):
     return ''.join(random.choice(string.lowercase) for _ in xrange(length))
 
 
-def generate(path):
+def generate(path, chars_to_write=100*1000*1000):
+
+    num_words = 100000
+
     random_words = [random_word(random.randint(1, 20)) for _ in xrange(num_words)]
 
     f = open(path, "w")
