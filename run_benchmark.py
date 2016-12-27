@@ -9,7 +9,7 @@ import glob
 import subprocess
 import errno
 import traceback
-import warnings
+import time
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -42,6 +42,20 @@ def print_bold(*args):
     print(AnsiColors.ENDC, end="")
 
 
+class Sizes(object):
+    S = "S"
+    M = "M"
+    L = "L"
+
+    class __metaclass__(type):
+        def __iter__(self):
+            return iter([
+                Sizes.S,
+                Sizes.M,
+                Sizes.L,
+            ])
+
+
 def plot_path(benchmark_name):
     return os.path.join(
         "plots",
@@ -59,46 +73,62 @@ def plot_csv_path(benchmark_name, stage_id, stage):
 
 class Wordcount(object):
 
-    _datafile = os.path.abspath("data/generated/random_words.txt")
+    _datafile = {
+        Sizes.S: os.path.abspath("data/generated/random_words_S.txt"),
+        Sizes.M: os.path.abspath("data/generated/random_words_M.txt"),
+        Sizes.L: os.path.abspath("data/generated/random_words_L.txt"),
+    }
+
+    sizes = {
+        Sizes.S:   1 * 1000 * 1000,
+        Sizes.M:  10 * 1000 * 1000,
+        Sizes.L: 100 * 1000 * 1000,
+    }
 
     stages = ["Total", "IO", "Split", "Count"]
-    benchmark_args = [_datafile]
+
+    @staticmethod
+    def benchmark_args(size):
+        return [Wordcount._datafile[size]]
 
     @staticmethod
     def ensure_data_exists():
-        if not os.path.exists(Wordcount._datafile):
-            print_warn(
-                " *** Generating data for 'word_count', this might take a while..."
-            )
-            from data.generate_text import generate
-            generate(Wordcount._datafile)
+        for size, f in Wordcount._datafile.iteritems():
+            if not os.path.exists(f):
+                print_warn(
+                    " *** Generating data [{}], this might take a while...".format(f)
+                )
+                from data.generate_text import generate
+                generate(f, Wordcount.sizes[size])
 
     @staticmethod
-    def result_extractor(files):
+    def result_extractor(b_entry):
         # TODO: should we do the result validation here (when collecting the runtimes,
-        # TODO: better name would probably by "extract_runtimes") or should there be
-        # TODO: a speparate "result_validator"? Probably the latter...
+        # TODO: better name would probably be "extract_runtimes") or should there be
+        # TODO: a separate "result_validator"? Probably the latter...
         runtimes_io = []
         runtimes_split = []
         runtimes_count = []
-        for fn in files:
-            with open(fn) as f:
-                try:
-                    t1 = float(f.readline())
-                    t2 = float(f.readline())
-                    t3 = float(f.readline())
-                    runtimes_io.append(t1)
-                    runtimes_split.append(t2)
-                    runtimes_count.append(t3)
-                except ValueError, e:
-                    print(
-                        AnsiColors.FAIL +
-                        "Output did not fulfil expected format:" +
-                        AnsiColors.ENDC
-                    )
-                    print(traceback.format_stack())
+        for size in Sizes:
+            files = b_entry.result_files(size)
+            for fn in files:
+                with open(fn) as f:
+                    try:
+                        t1 = float(f.readline())
+                        t2 = float(f.readline())
+                        t3 = float(f.readline())
+                        runtimes_io.append(t1)
+                        runtimes_split.append(t2)
+                        runtimes_count.append(t3)
+                    except ValueError, e:
+                        print(
+                            AnsiColors.FAIL +
+                            "Output did not fulfil expected format:" +
+                            AnsiColors.ENDC
+                        )
+                        print(traceback.format_stack())
 
-        N = len(files)
+        N = len(runtimes_io)
         runtimes_total = [
             runtimes_io[i] + runtimes_split[i] + runtimes_count[i]
             for i in xrange(N)
@@ -158,10 +188,9 @@ class Benchmark(object):
             "{:02d}_{}".format(self.impl_id, self.impl_name)
         )
 
-    @property
-    def result_files(self):
-        pattern = os.path.join(self.result_path, "stdout_run_*")
-        return glob.glob(pattern)
+    def result_files(self, size):
+        pattern = os.path.join(self.result_path, "stdout_run_{}_*".format(size))
+        return sorted(glob.glob(pattern))
 
     @property
     def label(self):
@@ -194,10 +223,10 @@ class Benchmark(object):
         if len(stderr) > 0:
             raise RuntimeError(stderr)
 
-    def run(self, args, run_id):
-        print(" *** Running: {} / {} / {}".format(
-            self.language, self.benchmark_name, self.impl_name
-        ))
+    def run(self, args, stdout_filename):
+        # print(" *** Running: {} / {} / {}".format(
+        #    self.language, self.benchmark_name, self.impl_name
+        #))
         p = subprocess.Popen(
             [
                 "/bin/bash",
@@ -216,7 +245,7 @@ class Benchmark(object):
         print("Read stdout of length: {}".format(len(stdout)))
         print(stdout)
 
-        out_path = os.path.join(self.result_path, "stdout_run_{:04d}".format(run_id))
+        out_path = stdout_filename
         ensure_dir_exists(out_path)
         f = open(out_path, "w")
         f.write(stdout)
@@ -264,8 +293,11 @@ def discover_benchmark_entries(prefix):
     return entries
 
 
+"""
 def run_benchmark(benchmark):
-    print_bold("\nBenchmarking: " + benchmark.benchmark_name)
+    print_bold("\nBenchmarking: {} / {} / {}".format(
+        benchmark.language, benchmark.benchmark_name, benchmark.impl_name
+    ))
 
     # check data
     meta_data = benchmark_meta[benchmark.benchmark_name]
@@ -278,12 +310,64 @@ def run_benchmark(benchmark):
     args = meta_data.benchmark_args
     for iter in xrange(9):
         benchmark.run(args, run_id=iter+1)
+"""
 
 
-def run_all_benchmarks():
-    benchmarks = discover_benchmark_entries("benchmarks")
-    for benchmark in benchmarks:
-        run_benchmark(benchmark)
+def run_all_benchmarks(benchmark_entries):
+
+    # data generation
+    benchmark_names = set([b_entry.benchmark_name for b_entry in benchmark_entries])
+    for benchmark_name in benchmark_names:
+        print_bold("\nPreparing Benchmark: {}".format(
+            benchmark_name
+        ))
+
+        # check data
+        b_meta_data = benchmark_meta[b_entry.benchmark_name]
+
+        t1 = time.time()
+        b_meta_data.ensure_data_exists()
+        t2 = time.time()
+        print("[{:6.1f} sec]".format(t2 - t1))
+
+    # build
+    for b_entry in benchmark_entries:
+        print_bold("\nBuilding: {} / {} / {}".format(
+            b_entry.language, b_entry.benchmark_name, b_entry.impl_name,
+        ))
+
+        # build
+        t1 = time.time()
+        b_entry.build()
+        t2 = time.time()
+        print("[{:6.1f} sec]".format(t2 - t1))
+
+    # run
+    # TODO: apply randomized order to minimize load effects
+    runs = [
+        (b, size, run_id)
+        for b in benchmark_entries
+        for size in [Sizes.S, Sizes.M, Sizes.L]
+        for run_id in [1, 2, 3]
+    ]
+
+    for i, (b_entry, size, run_id) in enumerate(runs):
+        # run_benchmark(benchmark)
+
+        print_bold("\nRunning benchmark [{} / {}]: {} / {} / {} / {} / {}".format(
+            i + 1, len(runs),
+            b_entry.language, b_entry.benchmark_name, b_entry.impl_name,
+            size, run_id,
+        ))
+
+        # run
+        args = b_meta_data.benchmark_args(size)
+        stdout_filename = os.path.join(b_entry.result_path, "stdout_run_{}_{:04d}".format(size, run_id))
+
+        t1 = time.time()
+        b_entry.run(args, stdout_filename)
+        t2 = time.time()
+        print("[{:6.1f} sec]".format(t2 - t1))
 
 
 def visualize_benchmark_html(name, benchmark_entries, meta_data):
@@ -294,7 +378,7 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
     # The extractors return a dict of "stage => list of runtimes", i.e,
     # run_times_per_stage becomes a "dict[benchmark_entry][stage] => list of runtimes"
     run_times_per_stage = {
-        b_entry: meta_data.result_extractor(b_entry.result_files) for b_entry in benchmark_entries
+        b_entry: meta_data.result_extractor(b_entry) for b_entry in benchmark_entries
     }
 
     stage_id = 0
@@ -407,7 +491,8 @@ if __name__ == "__main__":
 
     # TODO filter & determine affected benchmarks for visualization
     if not args.plot_only:
-        run_all_benchmarks()
+        benchmark_entries = discover_benchmark_entries("benchmarks")  # TODO: rename to implementations
+        run_all_benchmarks(benchmark_entries)
 
     all_benchmarks_results = discover_benchmark_entries("results")
 
