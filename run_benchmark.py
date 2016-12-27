@@ -408,7 +408,7 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
 
     # prepare template code
     plot_calls = []
-    divs = []
+    plot_htmls = []
     stage_id = 0
     for stage in meta_data.stages:
         stage_id += 1
@@ -420,15 +420,16 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
                 stage_id
             )
         ]
-        divs += [
-            '<div id="plot{}"></div>'.format(stage_id)
+        div = '<div id="plot{}"></div>'.format(stage_id)
+        plot_htmls += [
+            (stage, div)
         ]
 
     env = Environment(loader=FileSystemLoader('templates'))
     template = env.get_template('plot.html')
     html = template.render(
         plot_calls=plot_calls,
-        divs=divs,
+        plot_htmls=plot_htmls,
     )
 
     out_path = os.path.join(plot_path(name), "plot.html")

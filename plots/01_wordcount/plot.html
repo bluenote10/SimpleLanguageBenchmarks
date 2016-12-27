@@ -13,9 +13,7 @@
     <a href="https://github.com/bluenote10"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
 
     <style>
-      svg {
-        border: 1px solid #000;
-      }
+      svg {}
 
       .langlabels {
         font-family: 'PT Sans', sans-serif;
@@ -26,6 +24,18 @@
         stroke: #124563;
         fill: #12456355;
       }
+      .circlerun1 {
+        stroke: hsla(136, 78%, 45%, 1);
+        fill:   hsla(136, 78%, 45%, 0.2);
+      }
+      .circlerun2 {
+        stroke: hsla(221, 76%, 48%, 1);
+        fill:   hsla(221, 76%, 48%, 0.2);
+      }
+      .circlerun3 {
+        stroke: hsla(0, 96%, 59%, 1);
+        fill:   hsla(0, 96%, 59%, 0.2);
+      }
 
       .tickasdf {
         font-family: 'PT Sans', sans-serif;
@@ -34,13 +44,19 @@
     </style>
   </head>
 
+
   <body>
+
     <div class="container">
       <h1>Benchmark Results</h1>
 
+      <h3>Runtime: Total</h3>
       <div id="plot1"></div>
+      <h3>Runtime: IO</h3>
       <div id="plot2"></div>
+      <h3>Runtime: Split</h3>
       <div id="plot3"></div>
+      <h3>Runtime: Count</h3>
       <div id="plot4"></div>
       
     </div>
@@ -49,6 +65,9 @@
 
       function visualizeCsv(csvFile, selector) {
         console.log("Rendering " + csvFile + " into " + selector);
+
+        var numSizes = 3;
+        var numRuns = 3;
 
         var markersize = 4;
         var rowHeight = 20;
@@ -78,9 +97,8 @@
           var max = -Number.MAX_VALUE;
           for (i = 0; i < numRows; i++) {
             var row = data[i];
-            for (j = 0; j < 9; j++) {
+            for (j = 0; j < numSizes * numRuns; j++) {
               var colname = "run_" + (j+1);
-              console.log(colname);
               if (row[colname] < min) {
                 min = row[colname];
               }
@@ -127,7 +145,7 @@
             .text(function (d) { return d[colLang]; });
 
           // plot run columns
-          for (i = 0; i < 9; i++) {
+          for (i = 0; i < numSizes * numRuns; i++) {
             var colname = "run_" + (i+1);
             g.selectAll("circlerun" + i)
              .data(data)
@@ -136,7 +154,7 @@
              .attr("cx", function (d, i) { return xScale(d[colname]); })
              .attr("cy", function (d, i) { return yScale(i); })
              .attr("r", markersize)
-             .attr("class", "circlerun circlerun" + i);
+             .attr("class", "circlerun circlerun" + (Math.floor(i / numRuns) + 1));
           }
         }
 

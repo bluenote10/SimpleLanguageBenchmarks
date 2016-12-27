@@ -26,7 +26,9 @@
 
     <style>
       svg {
+        {%- if debugSvg | default(false) -%}
         border: 1px solid #000;
+        {%- endif -%}
       }
 
       .langlabels {
@@ -38,6 +40,18 @@
         stroke: #124563;
         fill: #12456355;
       }
+      .circlerun1 {
+        stroke: hsla(136, 78%, 45%, 1);
+        fill:   hsla(136, 78%, 45%, 0.2);
+      }
+      .circlerun2 {
+        stroke: hsla(221, 76%, 48%, 1);
+        fill:   hsla(221, 76%, 48%, 0.2);
+      }
+      .circlerun3 {
+        stroke: hsla(0, 96%, 59%, 1);
+        fill:   hsla(0, 96%, 59%, 0.2);
+      }
 
       .tickasdf {
         font-family: 'PT Sans', sans-serif;
@@ -46,11 +60,14 @@
     </style>
   </head>
 
+
   <body>
+
     <div class="container">
       <h1>Benchmark Results</h1>
 
-      {% for div in divs -%}
+      {% for title, div in plot_htmls -%}
+      <h3>Runtime: {{title}}</h3>
       {{ div }}
       {% endfor %}
     </div>
@@ -59,6 +76,9 @@
 
       function visualizeCsv(csvFile, selector) {
         console.log("Rendering " + csvFile + " into " + selector);
+
+        var numSizes = 3;
+        var numRuns = 3;
 
         var markersize = 4;
         var rowHeight = 20;
@@ -88,9 +108,8 @@
           var max = -Number.MAX_VALUE;
           for (i = 0; i < numRows; i++) {
             var row = data[i];
-            for (j = 0; j < 9; j++) {
+            for (j = 0; j < numSizes * numRuns; j++) {
               var colname = "run_" + (j+1);
-              console.log(colname);
               if (row[colname] < min) {
                 min = row[colname];
               }
@@ -137,7 +156,7 @@
             .text(function (d) { return d[colLang]; });
 
           // plot run columns
-          for (i = 0; i < 9; i++) {
+          for (i = 0; i < numSizes * numRuns; i++) {
             var colname = "run_" + (i+1);
             g.selectAll("circlerun" + i)
              .data(data)
@@ -146,7 +165,7 @@
              .attr("cx", function (d, i) { return xScale(d[colname]); })
              .attr("cy", function (d, i) { return yScale(i); })
              .attr("r", markersize)
-             .attr("class", "circlerun circlerun" + i);
+             .attr("class", "circlerun circlerun" + (Math.floor(i / numRuns) + 1));
           }
         }
 
