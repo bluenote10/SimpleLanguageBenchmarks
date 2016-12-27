@@ -68,8 +68,20 @@
 
       {{ description }}
 
+      <h3>Implementations</h3>
+
+      <ul>
+        {% for title, url, entry_description in impl_locs -%}
+          {% if url is not none %}
+          <li><a href="{{ url }}" type="text/plain">{{ title }}</a>: {{ entry_description }} </li>
+          {% else %}
+          <li>{{ title }}: {{ entry_description }} </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+
       <h3>Results</h3>
-      
+
       {% for title, div in plot_htmls -%}
       <h4>Runtime: {{title}}</h4>
       {{ div }}

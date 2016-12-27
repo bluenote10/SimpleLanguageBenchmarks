@@ -11,6 +11,7 @@ import errno
 import traceback
 import time
 import textwrap
+import yaml
 
 import markdown
 from jinja2 import Environment, FileSystemLoader
@@ -30,6 +31,12 @@ class AnsiColors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
+
+def print_error(*args):
+    print(AnsiColors.FAIL, end="")
+    print(*args)
+    print(AnsiColors.ENDC, end="")
 
 
 def print_warn(*args):
@@ -84,7 +91,7 @@ class Wordcount(object):
     To isolate I/O from other aspects, all solutions should implement the following stages:
 
     - **IO**: Read entire file into memory (one large string).
-    - **Split**: Split string on split characters: `\\n` and ` ` (single space)
+    - **Split**: Split string on split characters: `'\\n'` and `' '` (single space)
     - **Count**: Iterate over words to build a hash map with counts.
 
     Benchmark Aspects: Hash maps, basic string operations, allocation
@@ -236,9 +243,6 @@ class Benchmark(object):
         if not os.path.exists(build_script_path):
             return
 
-        print(" *** Building: {} / {} / {}".format(
-            self.language, self.benchmark_name, self.impl_name
-        ))
         p = subprocess.Popen(
             [
                 "/bin/bash",
@@ -253,9 +257,6 @@ class Benchmark(object):
             raise RuntimeError(stderr)
 
     def run(self, args, stdout_filename):
-        # print(" *** Running: {} / {} / {}".format(
-        #    self.language, self.benchmark_name, self.impl_name
-        #))
         p = subprocess.Popen(
             [
                 "/bin/bash",
@@ -278,6 +279,24 @@ class Benchmark(object):
         ensure_dir_exists(out_path)
         f = open(out_path, "w")
         f.write(stdout)
+
+    def get_meta_data(self):
+        path = os.path.join(self.impl_path, "benchmark.yml")
+        try:
+            with open(path) as f:
+                text = f.read()
+        except IOError as exc:
+            print_error("[ERROR] Failed to read meta data from '{}':".format(path))
+            print(exc)
+            text = None
+        meta_data = None
+        if text is not None:
+            try:
+                meta_data = yaml.load(text)
+            except yaml.YAMLError as exc:
+                print_error("[ERROR] Failed to parse YAML:")
+                print(exc)
+        return meta_data
 
     def __repr__(self):
         return "BenchmarkEntry({}, {}, {})".format(
@@ -454,12 +473,25 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
             (stage, div)
         ]
 
+    # get implementation paths
+    impl_locs = []
+    for b_entry in benchmark_entries:
+        entry_meta_data = b_entry.get_meta_data()
+        if entry_meta_data is not None and "source-file" in entry_meta_data:
+            url = "../../" + b_entry.impl_path + "/" + entry_meta_data["source-file"]
+            descr = entry_meta_data.get("description") or ""
+            impl_locs += [(b_entry.language, url, descr)]
+        else:
+            impl_locs += [(b_entry.language, None, "")]
+
+    # compile html
     html_description = markdown.markdown(meta_data.description)
 
     env = Environment(loader=FileSystemLoader('templates'))
     template = env.get_template('plot.html')
     html = template.render(
         description=html_description,
+        impl_locs=impl_locs,
         plot_calls=plot_calls,
         plot_htmls=plot_htmls,
     )
