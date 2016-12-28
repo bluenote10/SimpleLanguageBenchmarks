@@ -480,7 +480,7 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
     benchmark_template = env.get_template('benchmark.html')
 
     common_header = env.get_template('common_header.html').render(
-        url_resources="..",
+        base_url="..",
     )
     navbar = env.get_template('navbar.html').render(
         url_home="../index.html",
@@ -525,7 +525,7 @@ def visualize_summary_html():
     benchmark_template = env.get_template('main.html')
 
     common_header = env.get_template('common_header.html').render(
-        url_resources=".",
+        base_url=".",
     )
     navbar = env.get_template('navbar.html').render(
         url_home="index.html",

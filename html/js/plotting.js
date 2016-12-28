@@ -63,6 +63,12 @@ function visualizeCsv(csvFile, selector) {
     var g = svg.append("g")
       .attr("transform", "translate(" + margins.l + ", " + margins.r + ")");
 
+    // add tool tip
+    tip = d3.tip().attr('class', 'd3-tip').html(function(d) {
+      return "Language: " + d["lang"];
+    });
+    g.call(tip);
+
     // axis
     var xAxis = d3.axisBottom()
       .scale(xScale);
@@ -71,7 +77,7 @@ function visualizeCsv(csvFile, selector) {
      .attr("transform", "translate(0," + (canvasSizeInner.h + rowHeight) + ")")
      .call(xAxis);
 
-    // add langugage labels
+    // add language labels
     var labels = g.selectAll(".labels")
       .data(data)
       .enter()
@@ -91,7 +97,9 @@ function visualizeCsv(csvFile, selector) {
        .attr("cx", function (d, i) { return xScale(d[colname]); })
        .attr("cy", function (d, i) { return yScale(i); })
        .attr("r", markersize)
-       .attr("class", "circlerun circlerun" + (Math.floor(i / numRuns) + 1));
+       .attr("class", "circlerun circlerun" + (Math.floor(i / numRuns) + 1))
+       .on('mouseover', tip.show)
+       .on('mouseout', tip.hide);
     }
   }
 
