@@ -419,6 +419,7 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
     for stage in meta_data.stages:
         stage_id += 1
 
+        """
         rows = []
         for b_entry in benchmark_entries:
             run_times = run_times_per_stage[b_entry][stage]
@@ -434,6 +435,35 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
         ensure_dir_exists(plot_csv)
 
         schema = ["lang", "descr"] + ["run_{}".format(i+1) for i in xrange(9)]
+        with open(plot_csv, "w") as f:
+            f.write(";".join(schema) + "\n")
+            for row in rows:
+                out_row = ";".join([str(row[field]) for field in schema])
+                f.write(out_row + "\n")
+        """
+        rows = []
+        for b_entry in benchmark_entries:
+            run_times = run_times_per_stage[b_entry][stage]
+            for i, value in enumerate(run_times):
+                size = {
+                    0: Sizes.S,
+                    1: Sizes.M,
+                    2: Sizes.L,
+                }[i // 3]
+                run_id = i % 3
+                row = {
+                    "lang": b_entry.language,
+                    "descr": "",
+                    "size": size,
+                    "run_id": run_id,
+                    "time": value
+                }
+                rows.append(row)
+
+        plot_csv = html_path_stage_csv(name, stage_id, stage)
+        ensure_dir_exists(plot_csv)
+
+        schema = ["lang", "descr", "size", "run_id", "time"]
         with open(plot_csv, "w") as f:
             f.write(";".join(schema) + "\n")
             for row in rows:

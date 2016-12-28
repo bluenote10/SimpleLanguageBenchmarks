@@ -25,15 +25,15 @@
       }
       .circlerun1 {
         stroke: hsla(136, 78%, 45%, 1);
-        fill:   hsla(136, 78%, 45%, 0.2);
+        fill:   hsla(136, 78%, 45%, 0.1);
       }
       .circlerun2 {
         stroke: hsla(221, 76%, 48%, 1);
-        fill:   hsla(221, 76%, 48%, 0.2);
+        fill:   hsla(221, 76%, 48%, 0.1);
       }
       .circlerun3 {
         stroke: hsla(0, 96%, 59%, 1);
-        fill:   hsla(0, 96%, 59%, 0.2);
+        fill:   hsla(0, 96%, 59%, 0.1);
       }
 
       .tickasdf {
@@ -69,6 +69,7 @@
 
       {% for title, div in plot_htmls -%}
       <h4>Runtime: {{title}}</h4>
+      <p>Raw runtimes of all individual runs. Use mouse-over to see relative performance.</p>
       {{ div }}
       {% endfor %}
     </div>
