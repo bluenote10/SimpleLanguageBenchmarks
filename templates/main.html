@@ -26,6 +26,10 @@
 
       <h3>System Specs</h3>
 
+      <p>
+        All benchmarks were performed on a PC with the following specs:
+      </p>
+
       <table class="table">
         <thead>
           <tr>
@@ -34,7 +38,28 @@
           </tr>
         </thead>
         <tbody>
-          {% for k, v in specs %}
+          {% for k, v in sys_specs %}
+          <tr>
+            <td>{{ k }}</td>
+            <td>{{ v }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <p>
+        Summary of compiler/language versions used:
+      </p>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for k, v in soft_specs %}
           <tr>
             <td>{{ k }}</td>
             <td>{{ v }}</td>
