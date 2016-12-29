@@ -13,6 +13,7 @@ import time
 import textwrap
 import yaml
 import platform
+import random
 
 import markdown
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
@@ -235,11 +236,9 @@ class Benchmark(object):
         return sorted(glob.glob(pattern))
 
     @property
-    def label(self):
-        s = self.language
-        if self.impl_id > 1:
-            s += " / " + self.impl_name
-        return s
+    def impl_suffix(self):
+        fields = self.impl_name.split("_")
+        return ", ".join(fields)
 
     def build(self):
 
@@ -347,6 +346,20 @@ def discover_benchmark_entries(prefix):
     return entries
 
 
+def filter_benchmark_entries(entries, langs, benchmarks):
+    filtered = []
+    for entry in entries:
+        lang_cond = len(langs) == 0 or entry.language in langs
+        benchmark_cond = len(benchmarks) == 0 or entry.benchmark_name in benchmarks
+        if lang_cond and benchmark_cond:
+            filtered.append(entry)
+    return filtered
+
+
+# -----------------------------------------------------------------------------
+# Benchmark running
+# -----------------------------------------------------------------------------
+
 def run_all_benchmarks(benchmark_entries):
 
     # data generation
@@ -377,16 +390,16 @@ def run_all_benchmarks(benchmark_entries):
         print("[{:6.1f} sec]".format(t2 - t1))
 
     # run
-    # TODO: apply randomized order to minimize load effects
     runs = [
         (b, size, run_id)
         for b in benchmark_entries
         for size in [Sizes.S, Sizes.M, Sizes.L]
         for run_id in [1, 2, 3]
     ]
+    # Maybe we want to shuffle only w.r.t language/run_id and keep sizes in order?
+    random.shuffle(runs)
 
     for i, (b_entry, size, run_id) in enumerate(runs):
-        # run_benchmark(benchmark)
 
         print_bold("\nRunning benchmark [{} / {}]: {} / {} / {} / {} / {}".format(
             i + 1, len(runs),
@@ -404,10 +417,15 @@ def run_all_benchmarks(benchmark_entries):
         print("[{:6.1f} sec]".format(t2 - t1))
 
 
-def visualize_benchmark_html(name, benchmark_entries, meta_data):
-    print_bold("\nVisualizing: " + name)
+# -----------------------------------------------------------------------------
+# Visualization
+# -----------------------------------------------------------------------------
 
+def visualize_benchmark_html(name, benchmark_entries, meta_data):
     num_entries = len(benchmark_entries)
+    print_bold("\nRendering html of benchmark '{}' with {} entries".format(
+        name, num_entries
+    ))
 
     # The extractors return a dict of "stage => list of runtimes", i.e,
     # run_times_per_stage becomes a "dict[benchmark_entry][stage] => list of runtimes"
@@ -445,6 +463,7 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
         for b_entry in benchmark_entries:
             run_times = run_times_per_stage[b_entry][stage]
             for i, value in enumerate(run_times):
+                # TODO: make configurable
                 size = {
                     0: Sizes.S,
                     1: Sizes.M,
@@ -453,7 +472,8 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
                 run_id = i % 3
                 row = {
                     "lang": b_entry.language,
-                    "descr": "",
+                    "descr": b_entry.impl_suffix,
+                    "label": b_entry.language + " (" + b_entry.impl_suffix + ")",
                     "size": size,
                     "run_id": run_id,
                     "time": value
@@ -463,7 +483,7 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
         plot_csv = html_path_stage_csv(name, stage_id, stage)
         ensure_dir_exists(plot_csv)
 
-        schema = ["lang", "descr", "size", "run_id", "time"]
+        schema = ["lang", "descr", "label", "size", "run_id", "time"]
         with open(plot_csv, "w") as f:
             f.write(";".join(schema) + "\n")
             for row in rows:
@@ -532,7 +552,7 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
 
 
 def visualize_summary_html():
-    print_bold("\nVisualizing summary")
+    print_bold("\nRendering main html")
 
     sub_pages_folder = sorted(glob.glob(
         html_path() + "/*/index.html"
@@ -573,10 +593,10 @@ def visualize_summary_html():
     with open(out_path, "w") as f:
         f.write(html)
 
+
 # -----------------------------------------------------------------------------
 # Specs extraction
 # -----------------------------------------------------------------------------
-
 
 def match_line_in_text(text, pattern):
     for line in text.split("\n"):
@@ -718,6 +738,10 @@ def generate_markdown():
         write_file(out_path, text)
 
 
+# -----------------------------------------------------------------------------
+# Argument parsing
+# -----------------------------------------------------------------------------
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Benchmark runner framework",
@@ -725,15 +749,21 @@ def parse_args():
     parser.add_argument(
         "--benchmark",
         nargs="+",
+        default=[],
         help="Filter benchmarks to run by benchmark name(s).")
     parser.add_argument(
         "--lang",
         nargs="+",
+        default=[],
         help="Filter benchmarks to run by programming language(s).")
     parser.add_argument(
         "-p", "--plot-only",
         action='store_true',
         help="Do not re-run benchmarks, only visualize.")
+    parser.add_argument(
+        "-r", "--run-only",
+        action='store_true',
+        help="Do not run visualization, only run benchmarks.")
     parsed = parser.parse_args()
     return parsed
 
@@ -742,18 +772,31 @@ if __name__ == "__main__":
 
     args = parse_args()
 
-    # TODO filter & determine affected benchmarks for visualization
     if not args.plot_only:
-        benchmark_entries = discover_benchmark_entries("implementations")
+        all_benchmark_entries = discover_benchmark_entries("implementations")
+        benchmark_entries = filter_benchmark_entries(
+            all_benchmark_entries,
+            args.lang,
+            args.benchmark,
+        )
         run_all_benchmarks(benchmark_entries)
 
-    all_benchmarks_results = discover_benchmark_entries("results")
+    if not args.run_only:
+        all_benchmark_entries = discover_benchmark_entries("results")
+        benchmark_entries = filter_benchmark_entries(
+            all_benchmark_entries,
+            args.lang,
+            args.benchmark,
+        )
 
-    for benchmark_name in ["wordcount"]:
-        results = [
-            result for result in all_benchmarks_results if result.benchmark_name == benchmark_name
-        ]
-        meta_data = benchmark_meta[benchmark_name]
-        visualize_benchmark_html(benchmark_name, results, meta_data)
+        affected_benchmarks = set([b_entry.benchmark_name for b_entry in benchmark_entries])
 
-    visualize_summary_html()
+        for benchmark_name in affected_benchmarks:
+            entries_of_benchmark = [
+                b_entry for b_entry in benchmark_entries
+                if b_entry.benchmark_name == benchmark_name
+            ]
+            meta_data = benchmark_meta[benchmark_name]
+            visualize_benchmark_html(benchmark_name, entries_of_benchmark, meta_data)
+
+        visualize_summary_html()

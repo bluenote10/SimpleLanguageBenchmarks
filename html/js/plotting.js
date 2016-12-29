@@ -26,6 +26,28 @@ function uniqueMaintainOrder(data, getter) {
   return arr;
 }
 
+function extractLangAndSuffix(data, colLang, colSuffix) {
+  var arrLang = [];
+  var arrSffx = [];
+  var arrayLength = data.length;
+  for (var i = 0; i < arrayLength; i++) {
+    var lang = data[i][colLang];
+    var sffx = data[i][colSuffix];
+    if (arrLang.length == 0) {
+      arrLang.push(lang);
+      arrSffx.push(sffx);
+    } else {
+      var lastElementLang = arrLang[arrLang.length - 1];
+      var lastElementSffx = arrSffx[arrSffx.length - 1];
+      if (lastElementLang != lang || lastElementSffx != sffx) {
+        arrLang.push(lang);
+        arrSffx.push(sffx);
+      }
+    }
+  }
+  return [arrLang, arrSffx];
+}
+
 
 function visualizeCsv(csvFile, selector) {
   console.log("Rendering " + csvFile + " into " + selector);
@@ -36,9 +58,10 @@ function visualizeCsv(csvFile, selector) {
   var markersize = 5;
   var rowHeight = 20;
 
-  var colLang = "lang";
+  var colLang = "label"; // TODO: rename to colLabel as soon as we need actual colLang
   var colTime = "time";
   var colSize = "size";
+  var colSuffix = "descr";
 
   var margins = { l: 150, r: 30, t: 30, b: 60 };
 
@@ -48,7 +71,11 @@ function visualizeCsv(csvFile, selector) {
 
   function render(data) {
 
-    var dataLang = uniqueMaintainOrder(data, (d) => d["lang"]);
+    // var dataLangAndSuffix = extractLangAndSuffix(data, colLang, colSuffix);
+    // var dataLang = dataLangAndSuffix[0];
+    // var dataSffx = dataLangAndSuffix[1];
+    var dataLang = uniqueMaintainOrder(data, (d) => d[colLang]);
+
     var numRows = dataLang.length;
     console.log(dataLang);
     console.log(data);
@@ -130,7 +157,9 @@ function visualizeCsv(csvFile, selector) {
       .attr("x", -margins.l)
       .attr("y", function (lang) { return yScale(lang); })
       .attr("class", "langlabels")
-      .text(function (lang) { return lang; });
+      .text(function (lang, i) {
+        return lang;
+      });
 
     var sizesLookup = {
       S: "circlerun1",

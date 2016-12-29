@@ -1,28 +1,37 @@
-lang;descr;size;run_id;time
-C++;;S;0;0.0220392
-C++;;S;1;0.0219586
-C++;;S;2;0.0244954
-C++;;M;0;0.217978
-C++;;M;1;0.215986
-C++;;M;2;0.216082
-C++;;L;0;2.18116
-C++;;L;1;2.1861
-C++;;L;2;2.191
-Python;;S;0;0.0122010707855
-Python;;S;1;0.0153729915619
-Python;;S;2;0.012188911438
-Python;;M;0;0.119878053665
-Python;;M;1;0.11826300621
-Python;;M;2;0.122630834579
-Python;;L;0;1.17878699303
-Python;;L;1;1.18585991859
-Python;;L;2;1.18238902092
-Scala;;S;0;0.065839727
-Scala;;S;1;0.065015422
-Scala;;S;2;0.0652534
-Scala;;M;0;0.281364726
-Scala;;M;1;0.286154531
-Scala;;M;2;0.305590062
-Scala;;L;0;4.1219637
-Scala;;L;1;3.559245496
-Scala;;L;2;3.523093094
+lang;descr;label;size;run_id;time
+C++;default, gcc;C++ (default, gcc);S;0;0.022047
+C++;default, gcc;C++ (default, gcc);S;1;0.0224659
+C++;default, gcc;C++ (default, gcc);S;2;0.0248367
+C++;default, gcc;C++ (default, gcc);M;0;0.215862
+C++;default, gcc;C++ (default, gcc);M;1;0.219234
+C++;default, gcc;C++ (default, gcc);M;2;0.216629
+C++;default, gcc;C++ (default, gcc);L;0;2.17263
+C++;default, gcc;C++ (default, gcc);L;1;2.17213
+C++;default, gcc;C++ (default, gcc);L;2;2.17892
+C++;default, clang;C++ (default, clang);S;0;0.0229632
+C++;default, clang;C++ (default, clang);S;1;0.0218435
+C++;default, clang;C++ (default, clang);S;2;0.0216229
+C++;default, clang;C++ (default, clang);M;0;0.21636
+C++;default, clang;C++ (default, clang);M;1;0.212979
+C++;default, clang;C++ (default, clang);M;2;0.211859
+C++;default, clang;C++ (default, clang);L;0;2.13439
+C++;default, clang;C++ (default, clang);L;1;2.14515
+C++;default, clang;C++ (default, clang);L;2;2.13826
+Python;default;Python (default);S;0;0.016096830368
+Python;default;Python (default);S;1;0.0132300853729
+Python;default;Python (default);S;2;0.0154459476471
+Python;default;Python (default);M;0;0.117066144943
+Python;default;Python (default);M;1;0.119271039963
+Python;default;Python (default);M;2;0.122039794922
+Python;default;Python (default);L;0;1.17946791649
+Python;default;Python (default);L;1;1.18047380447
+Python;default;Python (default);L;2;1.17617607117
+Scala;default;Scala (default);S;0;0.065614943
+Scala;default;Scala (default);S;1;0.065498119
+Scala;default;Scala (default);S;2;0.06509824
+Scala;default;Scala (default);M;0;0.281099212
+Scala;default;Scala (default);M;1;0.286353726
+Scala;default;Scala (default);M;2;0.278941252
+Scala;default;Scala (default);L;0;3.553093859
+Scala;default;Scala (default);L;1;3.642988868
+Scala;default;Scala (default);L;2;4.169462762
