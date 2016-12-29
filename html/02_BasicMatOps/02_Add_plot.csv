@@ -1,0 +1,10 @@
+lang;descr;label;size;run_id;time
+Python;default;Python (default);S;1;0.00161504745483
+Python;default;Python (default);S;2;0.00161910057068
+Python;default;Python (default);S;3;0.00160002708435
+Python;default;Python (default);M;1;0.00678515434265
+Python;default;Python (default);M;2;0.00667405128479
+Python;default;Python (default);M;3;0.00679588317871
+Python;default;Python (default);L;1;0.0153179168701
+Python;default;Python (default);L;2;0.0152351856232
+Python;default;Python (default);L;3;0.0153229236603

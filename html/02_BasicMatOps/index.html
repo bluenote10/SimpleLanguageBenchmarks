@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head><meta charset="utf-8">
-    <title>Simple Language Benchmarks</title>
+    <title>Simple Language Benchmarks - BasicMatOps</title>
 
     <link href="https://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.4.0/d3.min.js"></script><!-- Bootstrap: Customized Theme -->
-    <link rel="stylesheet" href="./resources/bootstrap.min.css">
+    <link rel="stylesheet" href="../resources/bootstrap.min.css">
     
     
     <!-- Bootstrap post modifications; required by https://getbootstrap.com/components/#navbar-fixed-top -->
@@ -14,8 +14,38 @@
       body { padding-top: 70px; }
     </style>
     
-    <link rel="stylesheet" href="./styles/d3-tip.css">
+    <link rel="stylesheet" href="../styles/d3-tip.css">
 
+    <style>
+      svg {}
+
+      .langlabels {
+        font-family: 'PT Sans', sans-serif;
+        font-size: 12px;
+      }
+
+      circle {
+        stroke: #124563;
+        fill: #12456355;
+      }
+      .circlerun1 {
+        stroke: hsla(136, 78%, 45%, 1);
+        fill:   hsla(136, 78%, 45%, 0.1);
+      }
+      .circlerun2 {
+        stroke: hsla(221, 76%, 48%, 1);
+        fill:   hsla(221, 76%, 48%, 0.1);
+      }
+      .circlerun3 {
+        stroke: hsla(0, 96%, 59%, 1);
+        fill:   hsla(0, 96%, 59%, 0.1);
+      }
+
+      .tickasdf {
+        font-family: 'PT Sans', sans-serif;
+        font-size: 12px;
+      }
+    </style>
   </head>
 
 
@@ -36,7 +66,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="index.html">Simple Language Benchmarks</a>
+          <a class="navbar-brand" href="../index.html">Simple Language Benchmarks</a>
         </div>
     
         <!--
@@ -63,132 +93,77 @@
     </nav>
 
     <div class="container">
+      
 
-      <h3>Benchmarks</h3>
+      <h2>Benchmark: Basic Matrix Operation</h2>
+<h3>Task</h3>
+<p>Implement a basic matrix data structure providing addition and multiplication. Rules:</p>
+<ul>
+<li>Default implementations should implement a matrix-like data structure backed by
+  the native dynamic array of each language.</li>
+<li>Additional implementations may make use of optimized matrix libraries.</li>
+<li>Required operations: Matrix addition and multiplication.</li>
+</ul>
+<p>The benchmark is divided in three stages:</p>
+<ul>
+<li><strong>IO</strong>: Read CSVs and construct matrices</li>
+<li><strong>Add</strong>: Add matrices</li>
+<li><strong>Count</strong>: Multiply matrices</li>
+</ul>
+<p>Benchmark Aspects: Dynamic arrays, indexing, nested loops, code elegance of matrix implementations</p>
+<h4>Input</h4>
+<ol>
+<li>Argument: Size N of the NxN matrix (allowing to pre-allocate required memory
+   for the matrix; validation of CSV not necessary)</li>
+<li>Argument: Path of CSV (first matrix)</li>
+<li>Argument: Path of CSV (second matrix)</li>
+</ol>
+<p>Note: The framework may pass the same path as both first and second matrix.
+This must not be exploited, i.e., each matrix should still be read individually.</p>
+<h4>Control Output</h4>
+<p>After writing the stage runtimes to STDOUT, the implementations should print:</p>
+<ul>
+<li>Sum of diagonal elements after addition</li>
+<li>Sum of diagonal elements after multiplication</li>
+</ul>
 
-      <ol>
+      <h3>Implementations</h3>
+
+      <ul>
         
-        <li><a href="01_Wordcount/index.html">Wordcount</a></li>
+          <li><a href="../../implementations/Python/02_BasicMatOps/01_default/main.py" type="text/plain">Python</a>: Default implementation for Python </li>
+          
         
-        <li><a href="02_BasicMatOps/index.html">BasicMatOps</a></li>
-        
-      </ol>
+      </ul>
 
-      <h3>System Specs</h3>
+      <h3>Results</h3>
 
-      <p>
-        All benchmarks were performed on a PC with the following specs:
-      </p>
+      <h4>Runtime: Total</h4>
+      <p>Raw runtimes of all individual runs. Use mouse-over to see relative performance.</p>
+      <div id="plot1"></div>
+      <h4>Runtime: Add</h4>
+      <p>Raw runtimes of all individual runs. Use mouse-over to see relative performance.</p>
+      <div id="plot2"></div>
+      <h4>Runtime: Mul</h4>
+      <p>Raw runtimes of all individual runs. Use mouse-over to see relative performance.</p>
+      <div id="plot3"></div>
+      
+    </div>
 
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Property</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          
-          <tr>
-            <td>OS</td>
-            <td>Linux</td>
-          </tr>
-          
-          <tr>
-            <td>Distribution</td>
-            <td>Ubuntu 14.04.5 LTS</td>
-          </tr>
-          
-          <tr>
-            <td>Kernel</td>
-            <td>3.13.0-106-generic</td>
-          </tr>
-          
-          <tr>
-            <td>CPU</td>
-            <td>Intel(R) Core(TM) i5-4670 CPU @ 3.40GHz</td>
-          </tr>
-          
-          <tr>
-            <td>Number of cores</td>
-            <td>4</td>
-          </tr>
-          
-          <tr>
-            <td>L1 data cache size</td>
-            <td>32K</td>
-          </tr>
-          
-          <tr>
-            <td>L1 instruction cache size</td>
-            <td>32K</td>
-          </tr>
-          
-          <tr>
-            <td>L2 cache size</td>
-            <td>256K</td>
-          </tr>
-          
-          <tr>
-            <td>L3 cache size</td>
-            <td>6144K</td>
-          </tr>
-          
-          <tr>
-            <td>Memory</td>
-            <td>7930.1 MB</td>
-          </tr>
-          
-        </tbody>
-      </table>
-
-      <p>
-        Summary of compiler/language versions used:
-      </p>
-
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Property</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          
-          <tr>
-            <td>GCC</td>
-            <td>gcc (Ubuntu 4.8.5-2ubuntu1~14.04.1) 4.8.5</td>
-          </tr>
-          
-          <tr>
-            <td>Clang</td>
-            <td>clang version 3.8.0-2ubuntu3~trusty4 (tags/RELEASE_380/final)</td>
-          </tr>
-          
-          <tr>
-            <td>JVM</td>
-            <td>Java(TM) SE Runtime Environment (build 1.8.0_74-b02)</td>
-          </tr>
-          
-          <tr>
-            <td>Python</td>
-            <td>Python 2.7.6</td>
-          </tr>
-          
-          <tr>
-            <td>Nim</td>
-            <td>Nim Compiler Version 0.15.2 (2016-12-29) [Linux: amd64]</td>
-          </tr>
-          
-        </tbody>
-      </table>
-
+    <script src="../js/d3-tip.js"></script>
     <script src="../js/plotting.js"></script>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Bootstrap -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+      visualizeCsv("01_Total_plot.csv", "#plot1");
+      visualizeCsv("02_Add_plot.csv", "#plot2");
+      visualizeCsv("03_Mul_plot.csv", "#plot3");
+      
+    </script>
 
   </body>
 </html>

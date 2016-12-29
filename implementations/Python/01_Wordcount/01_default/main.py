@@ -7,10 +7,6 @@ import time
 import re
 
 
-if len(sys.argv) != 2:
-    sys.exit(-1)
-
-
 class TimedContext(object):
 
     def __enter__(self):
@@ -21,12 +17,15 @@ class TimedContext(object):
         print(self.t2 - self.t1)
 
 
+if len(sys.argv) != 2:
+    sys.exit(1)
+
 with TimedContext():
     f = open(sys.argv[1], "r")
     all_data = f.read()
 
 with TimedContext():
-    #words = all_data.split(" \n")
+    # words = all_data.split(" \n")
     words = re.split(" |\n", all_data)
 
 with TimedContext():

@@ -197,28 +197,37 @@ class BasicMatOps(object):
 
     ### Task
 
-    Multiply two matrices. Rules:
+    Implement a basic matrix data structure providing addition and multiplication. Rules:
 
-    - Default implementations should implemented a matrix-like data structure backed by
-      a native dynamic array. Supported operations: addition and multiplication.
+    - Default implementations should implement a matrix-like data structure backed by
+      the native dynamic array of each language.
+    - Additional implementations may make use of optimized matrix libraries.
+    - Required operations: Matrix addition and multiplication.
 
-    Stages:
+    The benchmark is divided in three stages:
 
-    - **IO**: Read CSV and construct matrix
-    - **Add**: Add matrix
-    - **Count**: Multiply matrix
+    - **IO**: Read CSVs and construct matrices
+    - **Add**: Add matrices
+    - **Count**: Multiply matrices
 
-    Benchmark Aspects: Dynamic arrays, indexing, nested loops
+    Benchmark Aspects: Dynamic arrays, indexing, nested loops, code elegance of matrix implementations
 
     #### Input
 
-    - Path of a CSV file to read (separator `;`).
+    1. Argument: Size N of the NxN matrix (allowing to pre-allocate required memory
+       for the matrix; validation of CSV not necessary)
+    2. Argument: Path of CSV (first matrix)
+    3. Argument: Path of CSV (second matrix)
+
+    Note: The framework may pass the same path as both first and second matrix.
+    This must not be exploited, i.e., each matrix should still be read individually.
 
     #### Control Output
 
     After writing the stage runtimes to STDOUT, the implementations should print:
 
-    - Sum of diagonal elements
+    - Sum of diagonal elements after addition
+    - Sum of diagonal elements after multiplication
 
     """)
 
@@ -229,16 +238,20 @@ class BasicMatOps(object):
     }
 
     sizes = {
-        Sizes.S:   100,
-        Sizes.M:   500,
-        Sizes.L:  1000,
+        Sizes.S: 100,
+        Sizes.M: 200,
+        Sizes.L: 300,
     }
 
     stages = ["Total", "Add", "Mul"]
 
     @staticmethod
     def benchmark_args(size):
-        return [BasicMatOps._datafile[size]]
+        return [
+            str(BasicMatOps.sizes[size]),
+            BasicMatOps._datafile[size],
+            BasicMatOps._datafile[size],
+        ]
 
     @staticmethod
     def ensure_data_exists():
@@ -247,7 +260,7 @@ class BasicMatOps(object):
                 print_warn(
                     " *** Generating data [{}], this might take a while...".format(f)
                 )
-                generators.generate_text(f, BasicMatOps.sizes[size])
+                generators.generate_matrix(f, BasicMatOps.sizes[size])
 
     @staticmethod
     def result_extractor(b_entry):
@@ -255,8 +268,8 @@ class BasicMatOps(object):
         # TODO: better name would probably be "extract_runtimes") or should there be
         # TODO: a separate "result_validator"? Probably the latter...
         runtimes_io = []
-        runtimes_split = []
-        runtimes_count = []
+        runtimes_add = []
+        runtimes_mul = []
         for size in Sizes:
             files = b_entry.result_files(size)
             for fn in files:
@@ -266,8 +279,8 @@ class BasicMatOps(object):
                         t2 = float(f.readline())
                         t3 = float(f.readline())
                         runtimes_io.append(t1)
-                        runtimes_split.append(t2)
-                        runtimes_count.append(t3)
+                        runtimes_add.append(t2)
+                        runtimes_mul.append(t3)
                     except ValueError, e:
                         print(
                             AnsiColors.FAIL +
@@ -278,15 +291,15 @@ class BasicMatOps(object):
 
         N = len(runtimes_io)
         runtimes_total = [
-            runtimes_io[i] + runtimes_split[i] + runtimes_count[i]
+            runtimes_io[i] + runtimes_add[i] + runtimes_mul[i]
             for i in xrange(N)
         ]
 
         result = {
             "Total": runtimes_total,
             "IO": runtimes_io,
-            "Split": runtimes_split,
-            "Count": runtimes_count,
+            "Add": runtimes_add,
+            "Mul": runtimes_mul,
         }
         return result
 
