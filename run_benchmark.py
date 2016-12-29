@@ -66,6 +66,9 @@ class Sizes(object):
                 Sizes.L,
             ])
 
+        def __len__(self):
+            return 3
+
 
 def html_path():
     return "html"
@@ -360,7 +363,7 @@ def filter_benchmark_entries(entries, langs, benchmarks):
 # Benchmark running
 # -----------------------------------------------------------------------------
 
-def run_all_benchmarks(benchmark_entries):
+def run_all_benchmarks(benchmark_entries, num_repetitions):
 
     # data generation
     benchmark_names = set([b_entry.benchmark_name for b_entry in benchmark_entries])
@@ -394,7 +397,7 @@ def run_all_benchmarks(benchmark_entries):
         (b, size, run_id)
         for b in benchmark_entries
         for size in [Sizes.S, Sizes.M, Sizes.L]
-        for run_id in [1, 2, 3]
+        for run_id in xrange(1, num_repetitions+1)
     ]
     # Maybe we want to shuffle only w.r.t language/run_id and keep sizes in order?
     random.shuffle(runs)
@@ -462,14 +465,14 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
         rows = []
         for b_entry in benchmark_entries:
             run_times = run_times_per_stage[b_entry][stage]
+            num_repetitions = len(run_times) // len(Sizes)
             for i, value in enumerate(run_times):
-                # TODO: make configurable
                 size = {
                     0: Sizes.S,
                     1: Sizes.M,
                     2: Sizes.L,
-                }[i // 3]
-                run_id = i % 3
+                }[i // num_repetitions]
+                run_id = (i % num_repetitions) + 1
                 row = {
                     "lang": b_entry.language,
                     "descr": b_entry.impl_suffix,
@@ -699,6 +702,7 @@ def get_line_from_command(command, lineno=0):
 def get_soft_specs():
     spec_getters = [
         ("GCC", lambda: get_line_from_command("gcc --version")),
+        ("Clang", lambda: get_line_from_command("clang++-3.8 --version")),
         ("Python", lambda: get_line_from_command("python --version")),
     ]
 
@@ -747,6 +751,11 @@ def parse_args():
         description="Benchmark runner framework",
         formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument(
+        "--num-repetitions",
+        type=int,
+        default=3,
+        help="Number of repetitions for each benchmark (default: 3).")
+    parser.add_argument(
         "--benchmark",
         nargs="+",
         default=[],
@@ -779,7 +788,7 @@ if __name__ == "__main__":
             args.lang,
             args.benchmark,
         )
-        run_all_benchmarks(benchmark_entries)
+        run_all_benchmarks(benchmark_entries, args.num_repetitions)
 
     if not args.run_only:
         all_benchmark_entries = discover_benchmark_entries("results")
