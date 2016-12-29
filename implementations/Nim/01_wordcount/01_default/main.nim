@@ -6,32 +6,28 @@ import times
 if paramCount() != 1:
   echo "Wrong"
   quit(1)
-
-var
-  t1: float
-  t2: float
-
 let filename = paramStr(1)
 
+# template to simplify timed execution
+template runTimed(body: untyped) =
+  let t1 = epochTime()
+  body
+  let t2 = epochTime()
+  echo t2 - t1
+
 # read
-t1 = epochTime()
-let content = readFile(filename)
-t2 = epochTime()
-echo t2 - t1
+runTimed:
+  let content = readFile(filename)
 
 # split
-t1 = epochTime()
-let words = content.split({'\x0D', '\x0A', ' '})
-t2 = epochTime()
-echo t2 - t1
+runTimed:
+  let words = content.split({'\x0D', '\x0A', ' '})
 
 # count
-t1 = epochTime()
-var wordCounts = initTable[string, int]()
-for w in words:
-  wordCounts.mgetOrPut(w, 0) += 1
-t2 = epochTime()
-echo t2 - t1
+runTimed:
+  var wordCounts = initTable[string, int]()
+  for w in words:
+    wordCounts.mgetOrPut(w, 0) += 1
 
 # control output
 echo wordCounts.len

@@ -718,6 +718,7 @@ def get_soft_specs():
     spec_getters = [
         ("GCC", lambda: get_line_from_command("gcc --version")),
         ("Clang", lambda: get_line_from_command("clang++-3.8 --version")),
+        ("JVM", lambda: get_line_from_command("java -version", 1)),
         ("Python", lambda: get_line_from_command("python --version")),
         ("Nim", lambda: get_line_from_command("nim --version")),
     ]
