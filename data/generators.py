@@ -14,7 +14,7 @@ def random_word(length):
     return ''.join(random.choice(string.lowercase) for _ in xrange(length))
 
 
-def generate(path, chars_to_write=100*1000*1000):
+def generate_text(path, chars_to_write=100*1000*1000):
 
     num_words = 100000
 

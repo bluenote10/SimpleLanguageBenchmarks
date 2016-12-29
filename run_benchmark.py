@@ -11,14 +11,14 @@ import errno
 import traceback
 import time
 import textwrap
-import yaml
 import platform
 import random
 
+import data.generators as generators
+
+import yaml
 import markdown
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
-
-import pandas as pd
 
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -144,8 +144,110 @@ class Wordcount(object):
                 print_warn(
                     " *** Generating data [{}], this might take a while...".format(f)
                 )
-                from data.generate_text import generate
-                generate(f, Wordcount.sizes[size])
+                generators.generate_text(f, Wordcount.sizes[size])
+
+    @staticmethod
+    def result_extractor(b_entry):
+        # TODO: should we do the result validation here (when collecting the runtimes,
+        # TODO: better name would probably be "extract_runtimes") or should there be
+        # TODO: a separate "result_validator"? Probably the latter...
+        runtimes_io = []
+        runtimes_split = []
+        runtimes_count = []
+        for size in Sizes:
+            files = b_entry.result_files(size)
+            for fn in files:
+                with open(fn) as f:
+                    try:
+                        t1 = float(f.readline())
+                        t2 = float(f.readline())
+                        t3 = float(f.readline())
+                        runtimes_io.append(t1)
+                        runtimes_split.append(t2)
+                        runtimes_count.append(t3)
+                    except ValueError, e:
+                        print(
+                            AnsiColors.FAIL +
+                            "Output did not fulfil expected format:" +
+                            AnsiColors.ENDC
+                        )
+                        print(traceback.format_exc())
+
+        N = len(runtimes_io)
+        runtimes_total = [
+            runtimes_io[i] + runtimes_split[i] + runtimes_count[i]
+            for i in xrange(N)
+        ]
+
+        result = {
+            "Total": runtimes_total,
+            "IO": runtimes_io,
+            "Split": runtimes_split,
+            "Count": runtimes_count,
+        }
+        return result
+
+
+class BasicMatOps(object):
+
+    title = "BasicMatOps"
+
+    description = textwrap.dedent("""\
+    ## Benchmark: Basic Matrix Operation
+
+    ### Task
+
+    Multiply two matrices. Rules:
+
+    - Default implementations should implemented a matrix-like data structure backed by
+      a native dynamic array. Supported operations: addition and multiplication.
+
+    Stages:
+
+    - **IO**: Read CSV and construct matrix
+    - **Add**: Add matrix
+    - **Count**: Multiply matrix
+
+    Benchmark Aspects: Dynamic arrays, indexing, nested loops
+
+    #### Input
+
+    - Path of a CSV file to read (separator `;`).
+
+    #### Control Output
+
+    After writing the stage runtimes to STDOUT, the implementations should print:
+
+    - Sum of diagonal elements
+
+    """)
+
+    _datafile = {
+        Sizes.S: os.path.abspath("data/generated/matrix_S.txt"),
+        Sizes.M: os.path.abspath("data/generated/matrix_M.txt"),
+        Sizes.L: os.path.abspath("data/generated/matrix_L.txt"),
+    }
+
+    sizes = {
+        Sizes.S:   100,
+        Sizes.M:   500,
+        Sizes.L:  1000,
+    }
+
+    stages = ["Total", "Add", "Mul"]
+
+    @staticmethod
+    def benchmark_args(size):
+        return [BasicMatOps._datafile[size]]
+
+    @staticmethod
+    def ensure_data_exists():
+        for size, f in BasicMatOps._datafile.iteritems():
+            if not os.path.exists(f):
+                print_warn(
+                    " *** Generating data [{}], this might take a while...".format(f)
+                )
+                generators.generate_text(f, BasicMatOps.sizes[size])
 
     @staticmethod
     def result_extractor(b_entry):
@@ -190,11 +292,13 @@ class Wordcount(object):
 
 
 benchmark_meta = {
-    "wordcount": Wordcount
+    "Wordcount": Wordcount,
+    "BasicMatOps": BasicMatOps,
 }
 
 benchmark_id = {
-    "wordcount": 1,
+    "Wordcount": 1,
+    "BasicMatOps": 2,
 }
 
 
