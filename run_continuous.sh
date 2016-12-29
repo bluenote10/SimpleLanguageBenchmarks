@@ -8,6 +8,7 @@ clear
 while true; do
 
   ./run_benchmark.py -p
+  # ./run_benchmark.py --lang Nim
   run_exit=$?
   echo "Run exit: $compiler_exit"
 

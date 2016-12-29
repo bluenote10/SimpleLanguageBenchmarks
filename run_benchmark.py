@@ -172,7 +172,7 @@ class Wordcount(object):
                             "Output did not fulfil expected format:" +
                             AnsiColors.ENDC
                         )
-                        print(traceback.format_stack())
+                        print(traceback.format_exc())
 
         N = len(runtimes_io)
         runtimes_total = [
@@ -261,8 +261,22 @@ class Benchmark(object):
             cwd=self.impl_path
         )
         stdout, stderr = p.communicate()
+
         if len(stderr) > 0:
-            raise RuntimeError(stderr)
+            print_warn(
+                "Build has written to STDERR (which may or may not be an issue):"
+            )
+            print(stderr)
+
+        # TODO: add switch for making build failures fatal
+        print("Return code: {}".format(p.returncode))
+        if p.returncode != 0:
+            print_error(
+                "Build has failed."
+            )
+            print("STDOUT:\n" + stdout)
+            print("STDERR:\n" + stderr)
+            import sys; sys.exit(1)
 
     def run(self, args, stdout_filename):
         p = subprocess.Popen(
@@ -279,6 +293,7 @@ class Benchmark(object):
             raise RuntimeError(stderr)
 
         # TODO handle return codes
+        print("Return code: {}".format(p.returncode))
 
         print("Read stdout of length: {}".format(len(stdout)))
         print(stdout)
@@ -704,6 +719,7 @@ def get_soft_specs():
         ("GCC", lambda: get_line_from_command("gcc --version")),
         ("Clang", lambda: get_line_from_command("clang++-3.8 --version")),
         ("Python", lambda: get_line_from_command("python --version")),
+        ("Nim", lambda: get_line_from_command("nim --version")),
     ]
 
     specs = [
