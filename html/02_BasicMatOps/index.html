@@ -45,6 +45,12 @@
         font-family: 'PT Sans', sans-serif;
         font-size: 12px;
       }
+
+      /* required for superscript in axis labels */
+      .axis tspan {
+        font-size: 9px;
+      }
+
     </style>
   </head>
 
@@ -106,7 +112,7 @@
 </ul>
 <p>The benchmark is divided in three stages:</p>
 <ul>
-<li><strong>IO</strong>: Read CSVs and construct matrices</li>
+<li><strong>IO</strong>: Read two CSVs and construct matrices</li>
 <li><strong>Add</strong>: Add matrices</li>
 <li><strong>Count</strong>: Multiply matrices</li>
 </ul>
@@ -134,6 +140,9 @@ This must not be exploited, i.e., each matrix should still be read individually.
           <li><a href="../../implementations/Python/02_BasicMatOps/01_default/main.py" type="text/plain">Python</a>: Default implementation for Python </li>
           
         
+          <li><a href="../../implementations/Scala/02_BasicMatOps/01_default/src/main/scala/main.scala" type="text/plain">Scala</a>: Default implementation for Scala </li>
+          
+        
       </ul>
 
       <h3>Results</h3>
@@ -141,12 +150,15 @@ This must not be exploited, i.e., each matrix should still be read individually.
       <h4>Runtime: Total</h4>
       <p>Raw runtimes of all individual runs. Use mouse-over to see relative performance.</p>
       <div id="plot1"></div>
-      <h4>Runtime: Add</h4>
+      <h4>Runtime: IO</h4>
       <p>Raw runtimes of all individual runs. Use mouse-over to see relative performance.</p>
       <div id="plot2"></div>
-      <h4>Runtime: Mul</h4>
+      <h4>Runtime: Add</h4>
       <p>Raw runtimes of all individual runs. Use mouse-over to see relative performance.</p>
       <div id="plot3"></div>
+      <h4>Runtime: Mul</h4>
+      <p>Raw runtimes of all individual runs. Use mouse-over to see relative performance.</p>
+      <div id="plot4"></div>
       
     </div>
 
@@ -159,9 +171,10 @@ This must not be exploited, i.e., each matrix should still be read individually.
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <script type="text/javascript">
-      visualizeCsv("01_Total_plot.csv", "#plot1");
-      visualizeCsv("02_Add_plot.csv", "#plot2");
-      visualizeCsv("03_Mul_plot.csv", "#plot3");
+      visualizeCsv("01_Total_plot.csv", "#plot1", false);
+      visualizeCsv("02_IO_plot.csv", "#plot2", false);
+      visualizeCsv("03_Add_plot.csv", "#plot3", false);
+      visualizeCsv("04_Mul_plot.csv", "#plot4", false);
       
     </script>
 

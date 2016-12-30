@@ -1,0 +1,19 @@
+lang;descr;label;size;run_id;time
+Python;default;Python (default);S;1;0.00253415107727
+Python;default;Python (default);S;2;0.00160002708435
+Python;default;Python (default);S;3;0.0016028881073
+Python;default;Python (default);M;1;0.00678014755249
+Python;default;Python (default);M;2;0.00684189796448
+Python;default;Python (default);M;3;0.00692915916443
+Python;default;Python (default);L;1;0.0154390335083
+Python;default;Python (default);L;2;0.0153000354767
+Python;default;Python (default);L;3;0.0152139663696
+Scala;default;Scala (default);S;1;0.003282786
+Scala;default;Scala (default);S;2;0.00323835
+Scala;default;Scala (default);S;3;0.00384633
+Scala;default;Scala (default);M;1;0.005513729
+Scala;default;Scala (default);M;2;0.004791862
+Scala;default;Scala (default);M;3;0.005360214
+Scala;default;Scala (default);L;1;0.010531997
+Scala;default;Scala (default);L;2;0.007303497
+Scala;default;Scala (default);L;3;0.006515191

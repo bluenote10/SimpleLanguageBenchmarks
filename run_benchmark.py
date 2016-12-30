@@ -133,6 +133,13 @@ class Wordcount(object):
 
     stages = ["Total", "IO", "Split", "Count"]
 
+    linear_scales = {
+        "Total": True,
+        "IO": True,
+        "Split": True,
+        "Count": True,
+    }
+
     @staticmethod
     def benchmark_args(size):
         return [Wordcount._datafile[size]]
@@ -206,7 +213,7 @@ class BasicMatOps(object):
 
     The benchmark is divided in three stages:
 
-    - **IO**: Read CSVs and construct matrices
+    - **IO**: Read two CSVs and construct matrices
     - **Add**: Add matrices
     - **Count**: Multiply matrices
 
@@ -243,7 +250,14 @@ class BasicMatOps(object):
         Sizes.L: 300,
     }
 
-    stages = ["Total", "Add", "Mul"]
+    stages = ["Total", "IO", "Add", "Mul"]
+
+    linear_scales = {
+        "Total": False,
+        "IO": False,
+        "Add": False,
+        "Mul": False,
+    }
 
     @staticmethod
     def benchmark_args(size):
@@ -632,11 +646,14 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
     for stage in meta_data.stages:
         stage_id += 1
 
+        linear_scale = meta_data.linear_scales[stage]
+
         plot_csv_basename = os.path.basename(html_path_stage_csv(name, stage_id, stage))
         plot_calls += [
-            'visualizeCsv("{}", "#plot{}");'.format(
+            'visualizeCsv("{}", "#plot{}", {});'.format(
                 plot_csv_basename,
-                stage_id
+                stage_id,
+                "true" if linear_scale else "false"
             )
         ]
         div = '<div id="plot{}"></div>'.format(stage_id)

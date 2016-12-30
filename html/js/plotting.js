@@ -1,4 +1,8 @@
 
+function powerOfTen(d) {
+  return d / Math.pow(10, Math.ceil(Math.log(d) / Math.LN10 - 1e-12)) === 1;
+}
+
 function curry(fn) {
      var slice = Array.prototype.slice,
         stored_args = slice.call(arguments, 1);
@@ -49,7 +53,7 @@ function extractLangAndSuffix(data, colLang, colSuffix) {
 }
 
 
-function visualizeCsv(csvFile, selector) {
+function visualizeCsv(csvFile, selector, scaleLinear) {
   console.log("Rendering " + csvFile + " into " + selector);
 
   var numSizes = 3;
@@ -63,7 +67,7 @@ function visualizeCsv(csvFile, selector) {
   var colSize = "size";
   var colSuffix = "descr";
 
-  var margins = { l: 150, r: 30, t: 30, b: 60 };
+  var margins = { l: 150, r: 30, t: 30, b: 90 };
 
   var clientBoundingRect = document.querySelector(selector).getBoundingClientRect()
   var widthRecommended = clientBoundingRect.right - clientBoundingRect.left;
@@ -94,10 +98,17 @@ function visualizeCsv(csvFile, selector) {
     console.log("min: " + min);
     console.log("max: " + max);
 
-    var xScale = d3
-      .scaleLinear()
-      .range([0, canvasSizeInner.w])
-      .domain([min, max]);
+    if (scaleLinear) {
+      var xScale = d3
+        .scaleLinear()
+        .range([0, canvasSizeInner.w])
+        .domain([min, max]);
+    } else {
+      var xScale = d3
+        .scaleLog()
+        .range([0, canvasSizeInner.w])
+        .domain([min, max]);
+    }
     var yScale = d3
       .scalePoint()
       .range([0, canvasSizeInner.h])
@@ -146,8 +157,28 @@ function visualizeCsv(csvFile, selector) {
       .scale(xScale);
 
     g.append("g")
+     .attr("class", "x axis")
      .attr("transform", "translate(0," + (canvasSizeInner.h + rowHeight) + ")")
      .call(xAxis);
+
+    // only for log scale: switch to power-of-ten labelling http://bl.ocks.org/mbostock/6738229
+    if (!scaleLinear) {
+      g.selectAll(".tick text")
+       .attr("transform", "translate(0, 4)")
+       .text(null)
+       .filter(powerOfTen)
+       .text(10)
+       .append("tspan")
+       .attr("dy", "-.7em")
+       .text(function(d) { return Math.round(Math.log(d) / Math.LN10); });
+    }
+
+    g.append("text")
+     .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+     .attr("transform",
+       "translate("+ (canvasSizeInner.w/2) + "," + (canvasSizeInner.h + 3*rowHeight) + ")"
+     )
+     .text("Runtime [sec]");
 
     // add language labels
     var labels = g.selectAll(".labels")

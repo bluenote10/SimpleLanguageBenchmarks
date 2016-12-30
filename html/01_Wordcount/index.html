@@ -45,6 +45,12 @@
         font-family: 'PT Sans', sans-serif;
         font-size: 12px;
       }
+
+      /* required for superscript in axis labels */
+      .axis tspan {
+        font-size: 9px;
+      }
+
     </style>
   </head>
 
@@ -163,10 +169,10 @@ To isolate I/O from other aspects, all solutions should implement the following 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <script type="text/javascript">
-      visualizeCsv("01_Total_plot.csv", "#plot1");
-      visualizeCsv("02_IO_plot.csv", "#plot2");
-      visualizeCsv("03_Split_plot.csv", "#plot3");
-      visualizeCsv("04_Count_plot.csv", "#plot4");
+      visualizeCsv("01_Total_plot.csv", "#plot1", true);
+      visualizeCsv("02_IO_plot.csv", "#plot2", true);
+      visualizeCsv("03_Split_plot.csv", "#plot3", true);
+      visualizeCsv("04_Count_plot.csv", "#plot4", true);
       
     </script>
 
