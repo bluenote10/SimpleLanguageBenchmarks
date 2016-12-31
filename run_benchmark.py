@@ -216,7 +216,7 @@ class BasicMatOps(object):
     - Additional implementations may make use of optimized matrix libraries.
     - Required operations: Matrix addition and multiplication.
 
-    The benchmark is divided in three stages:
+    The benchmark is divided into three stages:
 
     - **IO**: Read two CSVs and construct matrices
     - **Add**: Add matrices

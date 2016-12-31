@@ -7,5 +7,5 @@
 - **Code elegance**: Instead of trying to measure code complexity by some metric, the framework tries to make it very easy to jump into the source code
   of each individual implementation, allowing to study the code directly on Github.
 - **No excluded languages**: In contrast to the [benchmarksgame](http://benchmarksgame.alioth.debian.org/play.html)
-  no languages are forbidden per-se. In particular the goal is to add languages which are excluded in other benchmarks (e.g. Nim, Crystyl, and Julia).
+  no languages are forbidden per-se. In particular the goal is to add languages which are excluded in other benchmarks (e.g. Nim, Crystal, and Julia).
 

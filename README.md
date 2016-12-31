@@ -2,7 +2,7 @@
 
 Benchmark collection of random problem + language combinations.
 
-Comes with a framework making it easy to run, visualize, and contribute new solutions.
+Comes with a framework making it easy to contribute, run, and visualize new solutions.
 This website is auto-generated from the results.
 
 [Benchmarks page](https://bluenote10.github.io/SimpleLanguageBenchmarks)
@@ -24,7 +24,7 @@ Draw conclusions at your own risk.
 - **Code elegance**: Instead of trying to measure code complexity by some metric, the framework tries to make it very easy to jump into the source code
   of each individual implementation, allowing to study the code directly on Github.
 - **No excluded languages**: In contrast to the [benchmarksgame](http://benchmarksgame.alioth.debian.org/play.html)
-  no languages are forbidden per-se. In particular the goal is to add languages which are excluded in other benchmarks (e.g. Nim, Crystyl, and Julia).
+  no languages are forbidden per-se. In particular the goal is to add languages which are excluded in other benchmarks (e.g. Nim, Crystal, and Julia).
 
 
 
@@ -46,6 +46,8 @@ Each benchmark is performed with three different problem **sizes**: Currently, e
 
 You can run all benchmarks for yourself or even create your own set of benchmarks.
 The main framework is written in Python, and should be reproducible on any UNIX based system.
+
+TODO: extend documentation
 
 ## Contribute
 
