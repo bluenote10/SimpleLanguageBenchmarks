@@ -57,6 +57,11 @@
         color: hsla(0, 96%, 59%, 1);
       }
 
+      .stagebar {
+        stroke: rgba(0, 0, 0, 1);
+        fill:   rgba(0, 0, 0, 0.5);
+      }
+
       .tickasdf {
         font-family: 'PT Sans', sans-serif;
         font-size: 12px;
@@ -196,7 +201,12 @@ This must not be exploited, i.e., each matrix should still be read individually.
       </ul>
 
       <div class="page-header">
-        <h3>Results</h3>
+        <h3>Results &#8210; Stage Summary</h3>
+      </div>
+      <div id="stage-summary"></div>
+
+      <div class="page-header">
+        <h3>Results &#8210; Raw Run Times</h3>
       </div>
 
       <h4>Runtime: Total</h4>
@@ -243,6 +253,8 @@ This must not be exploited, i.e., each matrix should still be read individually.
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <script type="text/javascript">
+      visualizeCsvStageSummary("stage_summary.csv", "#stage-summary");
+
       visualizeCsv("01_Total_plot.csv", "#plot1", false);
       visualizeCsv("02_IO_plot.csv", "#plot2", false);
       visualizeCsv("03_Add_plot.csv", "#plot3", false);

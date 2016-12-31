@@ -246,6 +246,163 @@ function visualizeCsv(csvFile, selector, scaleLinear) {
 }
 
 
+function visualizeCsvStageSummary(csvFile, selector) {
+  console.log("Rendering stage summary " + csvFile + " into " + selector);
+
+  var markersize = 5;
+  var rowHeight = 20;
+
+  var colLang = "label"; // TODO: rename to colLabel as soon as we need actual colLang
+  var colTime = "time";
+  var colSize = "size";
+  var colSuffix = "descr";
+  var colStage = "stage";
+
+  var margins = { l: 150, r: 30, t: 30, b: 90 };
+
+  var clientBoundingRect = document.querySelector(selector).getBoundingClientRect()
+  var widthRecommended = clientBoundingRect.right - clientBoundingRect.left;
+  console.log("Recommended width: " + widthRecommended)
+
+  function render(data) {
+
+    var dataLang = uniqueMaintainOrder(data, (d) => d[colLang]);
+    var dataStages = d3.map(data, (d) => d[colStage]).keys()
+
+    var numRows = dataLang.length;
+    var numStages = dataStages.length;
+    console.log(dataLang);
+    console.log(dataStages);
+    console.log(data);
+    console.log(numRows);
+
+    var height = (numRows * numStages * rowHeight) + margins.t + margins.b;
+    var canvasSizeOuter = { w: widthRecommended, h: height };
+    var canvasSizeInner = {
+      w: canvasSizeOuter.w - margins.l - margins.r,
+      h: canvasSizeOuter.h - margins.t - margins.b
+    };
+
+    // determine min/max
+    var min = d3.min(data, (d) => d["time"]) * 0.9; // allowing to see a small bar even for the min
+    var max = d3.max(data, (d) => d["time"]);
+    console.log("min: " + min);
+    console.log("max: " + max);
+
+    var xScale = d3
+      .scaleLog()
+      .range([0, canvasSizeInner.w])
+      .domain([min, max]);
+    var yScaleLang = d3
+      .scaleBand()
+      .rangeRound([0, canvasSizeInner.h])
+      .paddingInner(0.4)
+      .domain(dataLang);
+    var yScaleStages = d3
+      .scaleBand()
+      .rangeRound([0, yScaleLang.bandwidth()])
+      .padding(0.4)
+      .domain(dataStages);
+
+    var svg = d3
+      .select(selector)
+      .append("svg")
+      .attr("width", canvasSizeOuter.w)
+      .attr("height", canvasSizeOuter.h);
+
+    var g = svg.append("g")
+      .attr("transform", "translate(" + margins.l + ", " + margins.r + ")");
+
+    // add tool tip
+    function toolTipRender(d, globaldata) {
+      return "Stage: " + d[colStage] + "</br>" +
+        "Runtime: " + d[colTime].toFixed(3) + " sec";
+    }
+    tip = d3.tip()
+            .attr('class', 'd3-tip')
+            .direction('e')
+            .offset([-2, 15])
+            .html(toolTipRender);
+    g.call(tip);
+
+    // axis
+    var xAxis = d3.axisBottom()
+      .scale(xScale);
+
+    g.append("g")
+     .attr("class", "x axis")
+     .attr("transform", "translate(0," + (canvasSizeInner.h + rowHeight) + ")")
+     .call(xAxis);
+
+    // only for log scale: switch to power-of-ten labelling http://bl.ocks.org/mbostock/6738229
+    g.selectAll(".tick text")
+     .attr("transform", "translate(0, 4)")
+     .text(null)
+     .filter(powerOfTen)
+     .text(10)
+     .append("tspan")
+     .attr("dy", "-.7em")
+     .text(function(d) { return Math.round(Math.log(d) / Math.LN10); });
+
+    g.append("text")
+     .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+     .attr("transform",
+       "translate("+ (canvasSizeInner.w/2) + "," + (canvasSizeInner.h + 3*rowHeight) + ")"
+     )
+     .text("Runtime [sec]");
+
+    // add language labels
+    var labels = g.selectAll(".labels")
+      .data(dataLang)
+      .enter()
+      .append("text")
+      .attr("x", -margins.l)
+      .attr("y", function (lang) { return yScaleLang(lang); })
+      .attr("class", "langlabels")
+      .attr("dominant-baseline", "baseline")
+      .text(function (lang, i) {
+        return lang;
+      });
+
+    // plot run columns
+    g.selectAll("stagebar")
+     .data(data)
+     .enter()
+     .append("rect")
+     .attr("x", 0)
+     .attr("y", function (d, i) { return yScaleLang(d[colLang]) + yScaleStages(d[colStage]) - yScaleLang.bandwidth()/2; })
+     .attr("width", function (d, i) { return xScale(d[colTime]); })
+     .attr("height", yScaleStages.bandwidth())
+     .attr("class", (d) => "stagebar")
+     .on('mouseover', function (d) {
+       //tip.show(d, data);
+       g.selectAll(".stagebar")
+        .filter((e) => e[colStage] != d[colStage])
+        .transition()
+        .style("opacity", 0.2);
+      })
+     .on('mouseout', function (d) {
+       //tip.hide(d);
+       g.selectAll(".stagebar")
+        .transition()
+        .style("opacity", 1.0);
+     });
+  }
+
+  function rowFormatter(row) {
+    row[colTime] = +row[colTime];
+    return row;
+  }
+
+  // https://github.com/d3/d3-request/blob/master/README.md#csv
+  // https://github.com/d3/d3-dsv#dsv_parse
+  d3.request(csvFile)
+    .mimeType("text/csv")
+    .response(function(xhr) { return d3.dsvFormat(";").parse(xhr.responseText, rowFormatter); })
+    .get(render);
+}
+
+
 /*
 function visualizeCsvOldSchema(csvFile, selector) {
   console.log("Rendering " + csvFile + " into " + selector);
