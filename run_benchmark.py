@@ -16,6 +16,7 @@ import random
 
 import data.generators as generators
 
+import numpy as np
 import yaml
 import markdown
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
@@ -64,6 +65,26 @@ def write_file(filename, text):
         f.write(text)
 
 
+def ensure_dir_exists(path):
+    dir_path = os.path.dirname(path)
+    try:
+        os.makedirs(dir_path)
+    except OSError as exc:
+        if exc.errno == errno.EEXIST and os.path.isdir(dir_path):
+            pass
+        else:
+            raise
+
+
+def write_csv_with_schema(filename, rows, schema):
+    ensure_dir_exists(filename)
+    with open(filename, "w") as f:
+        f.write(";".join(schema) + "\n")
+        for row in rows:
+            out_row = ";".join([str(row[field]) for field in schema])
+            f.write(out_row + "\n")
+
+
 class Sizes(object):
     S = "S"
     M = "M"
@@ -92,10 +113,17 @@ def html_path_benchmark(benchmark_name):
     )
 
 
-def html_path_stage_csv(benchmark_name, stage_id, stage):
+def html_path_raw_runtime_csv(benchmark_name, stage_id, stage):
     return os.path.join(
         html_path_benchmark(benchmark_name),
         "{:02d}_{}_plot.csv".format(stage_id, stage),
+    )
+
+
+def html_path_stage_summary_csv(benchmark_name, stage_id, stage):
+    return os.path.join(
+        html_path_benchmark(benchmark_name),
+        "stage_summary.csv",
     )
 
 
@@ -467,17 +495,6 @@ class Benchmark(object):
         )
 
 
-def ensure_dir_exists(path):
-    dir_path = os.path.dirname(path)
-    try:
-        os.makedirs(dir_path)
-    except OSError as exc:
-        if exc.errno == errno.EEXIST and os.path.isdir(dir_path):
-            pass
-        else:
-            raise
-
-
 def discover_benchmark_entries(prefix):
     entries = []
 
@@ -592,44 +609,10 @@ def locate_sub_pages(relative_path="."):
     return sub_pages
 
 
-def generate_benchmark_html(name, benchmark_entries, meta_data):
-    num_entries = len(benchmark_entries)
-    print_bold("\nRendering html of benchmark '{}' with {} entries".format(
-        name, num_entries
-    ))
+def write_raw_runtime_csv(benchmark_name, run_times_per_stage, benchmark_entries, meta_data):
 
-    # The extractors return a dict of "stage => list of runtimes", i.e,
-    # run_times_per_stage becomes a "dict[benchmark_entry][stage] => list of runtimes"
-    run_times_per_stage = {
-        b_entry: meta_data.result_extractor(b_entry) for b_entry in benchmark_entries
-    }
+    for stage_id, stage in enumerate(meta_data.stages, 1):
 
-    stage_id = 0
-    for stage in meta_data.stages:
-        stage_id += 1
-
-        """
-        rows = []
-        for b_entry in benchmark_entries:
-            run_times = run_times_per_stage[b_entry][stage]
-            row = {
-                "lang": b_entry.language,
-                "descr": "",
-            }
-            for i, value in enumerate(run_times):
-                row["run_{}".format(i+1)] = value
-            rows.append(row)
-
-        plot_csv = html_path_stage_csv(name, stage_id, stage)
-        ensure_dir_exists(plot_csv)
-
-        schema = ["lang", "descr"] + ["run_{}".format(i+1) for i in xrange(9)]
-        with open(plot_csv, "w") as f:
-            f.write(";".join(schema) + "\n")
-            for row in rows:
-                out_row = ";".join([str(row[field]) for field in schema])
-                f.write(out_row + "\n")
-        """
         rows = []
         for b_entry in benchmark_entries:
             run_times = run_times_per_stage[b_entry][stage]
@@ -651,15 +634,74 @@ def generate_benchmark_html(name, benchmark_entries, meta_data):
                 }
                 rows.append(row)
 
-        plot_csv = html_path_stage_csv(name, stage_id, stage)
-        ensure_dir_exists(plot_csv)
+        plot_csv = html_path_raw_runtime_csv(benchmark_name, stage_id, stage)
 
-        schema = ["lang", "descr", "label", "size", "run_id", "time"]
-        with open(plot_csv, "w") as f:
-            f.write(";".join(schema) + "\n")
-            for row in rows:
-                out_row = ";".join([str(row[field]) for field in schema])
-                f.write(out_row + "\n")
+        write_csv_with_schema(
+            plot_csv, rows,
+            schema=["lang", "descr", "label", "size", "run_id", "time"]
+        )
+
+
+def write_stage_summary_csv(benchmark_name, run_times_per_stage, benchmark_entries, meta_data):
+
+    rows = []
+
+    for b_entry in benchmark_entries:
+
+        for stage_id, stage in enumerate(meta_data.stages, 1):
+
+            # ugly hack: don't add the total stage to these plots
+            if stage == "Total":
+                continue
+
+            filtered_run_times = []
+
+            run_times = run_times_per_stage[b_entry][stage]
+            num_repetitions = len(run_times) // len(Sizes)
+            for i, value in enumerate(run_times):
+                size = {
+                    0: Sizes.S,
+                    1: Sizes.M,
+                    2: Sizes.L,
+                }[i // num_repetitions]
+                # filter on largest results
+                if size == Sizes.L:
+                    filtered_run_times.append(value)
+
+            median_runtime = np.median(filtered_run_times)
+
+            row = {
+                "lang": b_entry.language,
+                "descr": b_entry.impl_suffix,
+                "label": b_entry.language + " (" + b_entry.impl_suffix + ")",
+                "stage": stage,
+                "time": median_runtime
+            }
+            rows.append(row)
+
+    plot_csv = html_path_stage_summary_csv(benchmark_name, stage_id, stage)
+
+    write_csv_with_schema(
+        plot_csv, rows,
+        schema=["lang", "descr", "label", "stage", "time"]
+    )
+
+
+def generate_benchmark_html(name, benchmark_entries, meta_data):
+    num_entries = len(benchmark_entries)
+    print_bold("\nRendering html of benchmark '{}' with {} entries".format(
+        name, num_entries
+    ))
+
+    # The extractors return a dict of "stage => list of runtimes", i.e,
+    # run_times_per_stage becomes a "dict[benchmark_entry][stage] => list of runtimes"
+    run_times_per_stage = {
+        b_entry: meta_data.result_extractor(b_entry) for b_entry in benchmark_entries
+    }
+
+    # extract and write CSVs
+    write_raw_runtime_csv(name, run_times_per_stage, benchmark_entries, meta_data)
+    write_stage_summary_csv(name, run_times_per_stage, benchmark_entries, meta_data)
 
     # prepare template code
     plot_calls = []
@@ -670,7 +712,7 @@ def generate_benchmark_html(name, benchmark_entries, meta_data):
 
         linear_scale = meta_data.linear_scales[stage]
 
-        plot_csv_basename = os.path.basename(html_path_stage_csv(name, stage_id, stage))
+        plot_csv_basename = os.path.basename(html_path_raw_runtime_csv(name, stage_id, stage))
         plot_calls += [
             'visualizeCsv("{}", "#plot{}", {});'.format(
                 plot_csv_basename,
@@ -953,7 +995,7 @@ def parse_args():
     return parsed
 
 
-if __name__ == "__main__":
+def main():
 
     args = parse_args()
 
@@ -982,3 +1024,7 @@ if __name__ == "__main__":
 
         generate_summary_html()
         generate_summary_markdown()
+
+
+if __name__ == "__main__":
+    main()
