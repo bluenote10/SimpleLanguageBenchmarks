@@ -26,9 +26,8 @@ class SimpleMatrix(object):
         assert(self._N == other._N)
         N = self._N
         data = list(xrange(N*N))
-        for i in xrange(N):
-            for j in xrange(N):
-                data[i*N+j] = self._data[i*N+j] + other._data[i*N+j]
+        for i in xrange(N*N):
+            data[i] = self._data[i] + other._data[i]
         return SimpleMatrix(N, data)
 
     def __mul__(self, other):

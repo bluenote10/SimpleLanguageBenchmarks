@@ -968,17 +968,13 @@ if __name__ == "__main__":
 
     if not args.run_only:
         all_benchmark_entries = discover_benchmark_entries("results")
-        benchmark_entries = filter_benchmark_entries(
-            all_benchmark_entries,
-            args.lang,
-            args.benchmark,
-        )
+        # Note for visualization we probably never want to filter
 
-        affected_benchmarks = set([b_entry.benchmark_name for b_entry in benchmark_entries])
+        affected_benchmarks = set([b_entry.benchmark_name for b_entry in all_benchmark_entries])
 
         for benchmark_name in affected_benchmarks:
             entries_of_benchmark = [
-                b_entry for b_entry in benchmark_entries
+                b_entry for b_entry in all_benchmark_entries
                 if b_entry.benchmark_name == benchmark_name
             ]
             meta_data = benchmark_meta[benchmark_name]

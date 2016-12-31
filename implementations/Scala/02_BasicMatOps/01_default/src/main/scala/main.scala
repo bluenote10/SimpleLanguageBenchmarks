@@ -5,10 +5,8 @@ class SimpleMatrix(val N: Int, val data: Array[Double]) {
   
   def +(that: SimpleMatrix): SimpleMatrix = {
     val newData = Array.ofDim[Double](N * N)
-    for (i <- Range(0, N)) {
-      for (j <- Range(0, N)) {
-        newData(i*N + j) = this.data(i*N + j) + that.data(i*N + j)
-      }
+    for (i <- Range(0, N*N)) {
+      newData(i) = this.data(i) + that.data(i)
     }
     new SimpleMatrix(N, newData)
   }
