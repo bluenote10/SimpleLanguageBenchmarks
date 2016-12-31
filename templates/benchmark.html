@@ -36,6 +36,16 @@
         fill:   hsla(0, 96%, 59%, 0.1);
       }
 
+      .size-s {
+        color: hsla(136, 78%, 45%, 1);
+      }
+      .size-m {
+        color: hsla(221, 76%, 48%, 1);
+      }
+      .size-l {
+        color: hsla(0, 96%, 59%, 1);
+      }
+
       .tickasdf {
         font-family: 'PT Sans', sans-serif;
         font-size: 12px;
@@ -85,7 +95,12 @@
 
       {% for title, div in plot_htmls -%}
       <h4>Runtime: {{title}}</h4>
-      <p>Raw runtimes of all individual runs. Use mouse-over to see relative performance.</p>
+      <p>
+        Raw runtimes of all individual runs for
+        <span class="size-s">small</span>, <span class="size-m">medium</span>, and <span class="size-l">large</span>
+        data set sizes. 
+        Use mouse-over to see relative performance.
+      </p>
       {{ div }}
       {% endfor %}
     </div>
