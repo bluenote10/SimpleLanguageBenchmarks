@@ -253,8 +253,8 @@ class BasicMatOps(object):
 
     sizes = {
         Sizes.S: 100,
-        Sizes.M: 200,
-        Sizes.L: 300,
+        Sizes.M: 300,
+        Sizes.L: 500,
     }
 
     stages = ["Total", "IO", "Add", "Mul"]

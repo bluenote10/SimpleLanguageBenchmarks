@@ -38,9 +38,9 @@ class SimpleMatrix(object):
         for i in xrange(N):
             for j in xrange(N):
                 sum = 0
-                for z in xrange(N):
-                    sum += self._data[i*N+z] + other._data[z*N+j]
-                data[i * N + j] = sum
+                for k in xrange(N):
+                    sum += self._data[i*N+k] * other._data[k*N+j]
+                data[i*N+j] = sum
         return SimpleMatrix(N, data)
 
     def diag_sum(self):

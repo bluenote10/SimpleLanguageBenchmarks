@@ -134,9 +134,11 @@ Draw conclusions at your own risk.</p>
 All HTML on this page is auto-generated.</p>
 <p>Each benchmark problem is split into <strong>stages</strong>, i.e., the solution is computed in several steps and
 each step is measured individually (implementations are responsible themselves to measure the time for each step).
-In some cases splitting the solutions into several steps will feel slightly non-idiomatic and inefficient,
-but it comes with the benefit to disentangle e.g. I/O from the computations and in some cases reveals
-interesting results like a language being particularly good/bad in certain steps.</p>
+The total runtime is obtained by adding up the runtimes of all stages.</p>
+<p>In some cases splitting the solutions into several steps will feel slightly non-idiomatic and inefficient,
+but it comes with the benefit to disentangle for instance I/O from the computations.
+Moreover, it sometimes reveals interesting results like a language being particularly fast in a certain step
+while being slow in a different step.</p>
 <p>Each benchmark is performed with three different problem <strong>sizes</strong>: Currently, each problem comes in a
 <strong>s</strong>mall, <strong>m</strong>edium, and <strong>l</strong>arge variant.</p>
 

@@ -19,7 +19,7 @@ class SimpleMatrix(val N: Int, val data: Array[Double]) {
       for (j <- Range(0, N)) {
         var sum = 0d
         for (k <- Range(0, N)) {
-          sum += this.data(i*N + k) + that.data(k*N + j)
+          sum += this.data(i*N + k) * that.data(k*N + j)
         }
         newData(i*N + j) = sum
       }
