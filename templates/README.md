@@ -2,7 +2,7 @@
 
 {{ intro }}
 
-[Benchmarks page](https://bluenote10.github.io/SimpleLanguageBenchmark)
+[Benchmarks page](https://bluenote10.github.io/SimpleLanguageBenchmarks)
 
 {{ disclaimer }}
 

@@ -82,7 +82,7 @@ class Sizes(object):
 
 
 def html_path():
-    return "html"
+    return "docs"
 
 
 def html_path_benchmark(benchmark_name):
@@ -688,7 +688,7 @@ def generate_benchmark_html(name, benchmark_entries, meta_data):
     for b_entry in benchmark_entries:
         entry_meta_data = b_entry.get_meta_data()
         if entry_meta_data is not None and "source-file" in entry_meta_data:
-            url = "../../" + b_entry.impl_path + "/" + entry_meta_data["source-file"]
+            url = b_entry.impl_path + "/" + entry_meta_data["source-file"]
             descr = entry_meta_data.get("description") or ""
             impl_locs += [(b_entry.language, url, descr)]
         else:

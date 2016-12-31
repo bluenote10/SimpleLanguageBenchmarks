@@ -5,7 +5,7 @@ Benchmark collection of random problem + language combinations.
 Comes with a framework making it easy to run, visualize, and contribute new solutions.
 This website is auto-generated from the results.
 
-[Benchmarks page](https://bluenote10.github.io/SimpleLanguageBenchmark)
+[Benchmarks page](https://bluenote10.github.io/SimpleLanguageBenchmarks)
 
 Disclaimer:
 This is a fun project, without putting too much though into experiment design.

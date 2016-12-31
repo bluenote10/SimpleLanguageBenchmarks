@@ -72,7 +72,7 @@
       <ul>
         {% for title, url, entry_description in impl_locs -%}
           {% if url is not none %}
-          <li><a href="{{ url }}" type="text/plain">{{ title }}</a>: {{ entry_description }} </li>
+          <li><a href="https://github.com/bluenote10/SimpleLanguageBenchmarks/blob/master/{{ url }}#L1" type="text/plain">{{ title }}</a>: {{ entry_description }} </li>
           {% else %}
           <li>{{ title }}: {{ entry_description }} </li>
           {% endif %}
