@@ -55,11 +55,19 @@
     {{ navbar | indent(4) }}
 
     <div class="container">
-      {# <h1>Benchmark Results</h1> #}
+      <div class="jumbotron">
+        <h2>Benchmark: {{ title }}</h2>
+      </div>
+
+      <div class="page-header">
+        <h3>Task</h3>
+      </div>
 
       {{ description }}
 
-      <h3>Implementations</h3>
+      <div class="page-header">
+        <h3>Implementations</h3>
+      </div>
 
       <ul>
         {% for title, url, entry_description in impl_locs -%}
@@ -71,7 +79,9 @@
         {% endfor %}
       </ul>
 
-      <h3>Results</h3>
+      <div class="page-header">
+        <h3>Results</h3>
+      </div>
 
       {% for title, div in plot_htmls -%}
       <h4>Runtime: {{title}}</h4>

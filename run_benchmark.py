@@ -53,6 +53,17 @@ def print_bold(*args):
     print(AnsiColors.ENDC, end="")
 
 
+def read_file(filename):
+    with open(filename) as f:
+        text = f.read()
+    return text
+
+
+def write_file(filename, text):
+    with open(filename, 'w') as f:
+        f.write(text)
+
+
 class Sizes(object):
     S = "S"
     M = "M"
@@ -93,10 +104,6 @@ class Wordcount(object):
     title = "Wordcount"
 
     description = textwrap.dedent("""\
-    ## Benchmark: Wordcount
-
-    ### Task
-
     Perform a simple word count on a text file.
     To isolate I/O from other aspects, all solutions should implement the following stages:
 
@@ -104,12 +111,14 @@ class Wordcount(object):
     - **Split**: Split string on split characters: `'\\n'` and `' '` (single space)
     - **Count**: Iterate over words to build a hash map with counts.
 
-    Benchmark Aspects: Hash maps, basic string operations, allocation
+    Benchmark aspects: Hash maps, basic string operations, allocation
 
+    <div class="page-header"></div>
     #### Input
 
     - Path of text file to read.
 
+    <div class="page-header"></div>
     #### Control Output
 
     After writing the stage runtimes to STDOUT, the implementations should print:
@@ -197,13 +206,9 @@ class Wordcount(object):
 
 class BasicMatOps(object):
 
-    title = "BasicMatOps"
+    title = "Basic Matrix Operations"
 
     description = textwrap.dedent("""\
-    ## Benchmark: Basic Matrix Operation
-
-    ### Task
-
     Implement a basic matrix data structure providing addition and multiplication. Rules:
 
     - Default implementations should implement a matrix-like data structure backed by
@@ -217,8 +222,9 @@ class BasicMatOps(object):
     - **Add**: Add matrices
     - **Count**: Multiply matrices
 
-    Benchmark Aspects: Dynamic arrays, indexing, nested loops, code elegance of matrix implementations
+    Benchmark aspects: Dynamic arrays, indexing, nested loops, code elegance of matrix implementations
 
+    <div class="page-header"></div>
     #### Input
 
     1. Argument: Size N of the NxN matrix (allowing to pre-allocate required memory
@@ -229,6 +235,7 @@ class BasicMatOps(object):
     Note: The framework may pass the same path as both first and second matrix.
     This must not be exploited, i.e., each matrix should still be read individually.
 
+    <div class="page-header"></div>
     #### Control Output
 
     After writing the stage runtimes to STDOUT, the implementations should print:
@@ -570,7 +577,22 @@ def run_all_benchmarks(benchmark_entries, num_repetitions):
 # Visualization
 # -----------------------------------------------------------------------------
 
-def visualize_benchmark_html(name, benchmark_entries, meta_data):
+def locate_sub_pages(relative_path="."):
+    sub_pages_folder = sorted(glob.glob(
+        html_path() + "/*/index.html"
+    ))
+    sub_pages = []
+    for sub_page in sub_pages_folder:
+        folder_name = sub_page.split(os.path.sep)[-2]
+        idx, name = folder_name.split("_")
+        human_name = benchmark_meta[name].title
+        relative_url = '/'.join(sub_page.split(os.path.sep)[-2:])
+        relative_url = relative_path + "/" + relative_url
+        sub_pages.append((human_name, relative_url))
+    return sub_pages
+
+
+def generate_benchmark_html(name, benchmark_entries, meta_data):
     num_entries = len(benchmark_entries)
     print_bold("\nRendering html of benchmark '{}' with {} entries".format(
         name, num_entries
@@ -681,10 +703,14 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
     )
     benchmark_template = env.get_template('benchmark.html')
 
+    # Navbar requires knowledge of all pages as well.
+    sub_pages = locate_sub_pages("..")
+
     common_header = env.get_template('common_header.html').render(
         base_url="..",
     )
     navbar = env.get_template('navbar.html').render(
+        sub_pages=sub_pages,
         url_home="../index.html",
     )
 
@@ -703,22 +729,13 @@ def visualize_benchmark_html(name, benchmark_entries, meta_data):
         f.write(html)
 
 
-def visualize_summary_html():
+def generate_summary_html():
     print_bold("\nRendering main html")
 
-    sub_pages_folder = sorted(glob.glob(
-        html_path() + "/*/index.html"
-    ))
-    sub_pages = []
-    for sub_page in sub_pages_folder:
-        folder_name = sub_page.split(os.path.sep)[-2]
-        idx, name = folder_name.split("_")
-        human_name = benchmark_meta[name].title
-        relative_url = '/'.join(sub_page.split(os.path.sep)[-2:])
-        sub_pages.append((human_name, relative_url))
+    sub_pages = locate_sub_pages(".")
 
-    # compile html
-    # html_description = markdown.markdown(meta_data.description)
+    # load markdown elements and convert to html
+    markdown_fragments = load_markdown_fragments(convert_to_html=True)
 
     env = Environment(
         loader=FileSystemLoader('templates'),
@@ -730,6 +747,7 @@ def visualize_summary_html():
         base_url=".",
     )
     navbar = env.get_template('navbar.html').render(
+        sub_pages=sub_pages,
         url_home="index.html",
     )
 
@@ -739,11 +757,47 @@ def visualize_summary_html():
         sub_pages=sub_pages,
         sys_specs=get_sys_specs(),
         soft_specs=get_soft_specs(),
+        **markdown_fragments
     )
 
     out_path = os.path.join(html_path(), "index.html")
     with open(out_path, "w") as f:
         f.write(html)
+
+
+def load_markdown_fragments(convert_to_html=False):
+    fragments = [
+        "contribute",
+        "intro",
+        "disclaimer",
+        "framework",
+        "license",
+        "philosophy",
+        "run_benchmarks",
+    ]
+    results = dict()
+    for fragment in fragments:
+        text = read_file("templates/_{}.md".format(fragment))
+        if convert_to_html:
+            text = markdown.markdown(text)
+        results[fragment] = text
+    return results
+
+
+def generate_summary_markdown():
+
+    env = Environment(
+        loader=FileSystemLoader('templates'),
+        undefined=StrictUndefined,
+    )
+    readme_template = env.get_template('README.md')
+
+    markdown_fragments = load_markdown_fragments()
+
+    readme_text = readme_template.render(
+        **markdown_fragments
+    )
+    write_file("README.md", readme_text)
 
 
 # -----------------------------------------------------------------------------
@@ -863,35 +917,6 @@ def get_soft_specs():
     ]
     return specs
 
-# -----------------------------------------------------------------------------
-# Specs extraction
-# -----------------------------------------------------------------------------
-
-
-def read_file(filename):
-    with open(filename) as f:
-        text = f.read()
-    return text
-
-
-def write_file(filename, text):
-    with open(filename, 'w') as f:
-        f.write(text)
-
-
-def generate_markdown():
-
-    readme_text = read_file("templates/README.template.md")
-    write_file("README.md", readme_text)
-
-    benchmark_templates = [
-        "templates/01_wordcount.template.md"
-    ]
-    for benchmark_template in benchmark_templates:
-        text = read_file(benchmark_template)
-        out_path = os.path.basename(benchmark_template.replace(".template", ""))
-        write_file(out_path, text)
-
 
 # -----------------------------------------------------------------------------
 # Argument parsing
@@ -957,6 +982,7 @@ if __name__ == "__main__":
                 if b_entry.benchmark_name == benchmark_name
             ]
             meta_data = benchmark_meta[benchmark_name]
-            visualize_benchmark_html(benchmark_name, entries_of_benchmark, meta_data)
+            generate_benchmark_html(benchmark_name, entries_of_benchmark, meta_data)
 
-        visualize_summary_html()
+        generate_summary_html()
+        generate_summary_markdown()

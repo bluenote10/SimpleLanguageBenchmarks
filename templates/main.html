@@ -16,7 +16,20 @@
 
     <div class="container">
 
-      <h3>Benchmarks</h3>
+      <div class="jumbotron">
+        <h2>Simple Language Benchmarks</h2>
+        <div class="lead">
+          {{ intro }}
+        </div>
+      </div>
+
+      <div>
+        {{ disclaimer }}
+      </div>
+
+      <div class="page-header">
+        <h3>Benchmarks</h3>
+      </div>
 
       <ol>
         {% for name, url in sub_pages %}
@@ -24,7 +37,34 @@
         {% endfor %}
       </ol>
 
-      <h3>System Specs</h3>
+      <div class="page-header">
+        <h3>Philosophy</h3>
+      </div>
+      {{ philosophy }}
+
+      <div class="page-header">
+        <h3>About the Framework</h3>
+      </div>
+      {{ framework }}
+
+      <div class="page-header">
+        <h3>How to Reproduce</h3>
+      </div>
+      {{ run_benchmarks }}
+
+      <div class="page-header">
+        <h3>Contribute</h3>
+      </div>
+      {{ contribute }}
+
+      <div class="page-header">
+        <h3>License</h3>
+      </div>
+      {{ license }}
+
+      <div class="page-header">
+        <h3 id="specs">System Specs</h3>
+      </div>
 
       <p>
         All benchmarks were performed on a PC with the following specs:

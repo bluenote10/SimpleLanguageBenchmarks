@@ -6,17 +6,23 @@
 {%- endif -%}
 
 <!-- Bootstrap: Customized Theme -->
-<link rel="stylesheet" href="{{ base_url }}/resources/bootstrap.min.css">
-{#
+{% if useBootswatch | default(true) %}
+<link rel="stylesheet" href="{{ base_url }}/resources/bootstrap.min.cosmo.css">
+{% else %}
 <!-- Bootstrap: Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <!-- Bootstrap: Optional theme -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-#}
+{% endif %}
 
 <!-- Bootstrap post modifications; required by https://getbootstrap.com/components/#navbar-fixed-top -->
 <style>
-  body { padding-top: 70px; }
+  body { padding-top: 50px; }
+
+  .jumbotron{
+    color: #111;
+    background: linear-gradient(0deg, #CCCCCC, #EEEEEE);
+  }
 </style>
 
 <link rel="stylesheet" href="{{ base_url }}/styles/d3-tip.css">

@@ -6,12 +6,18 @@
     <link href="https://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.4.0/d3.min.js"></script><!-- Bootstrap: Customized Theme -->
-    <link rel="stylesheet" href="../resources/bootstrap.min.css">
+    
+    <link rel="stylesheet" href="../resources/bootstrap.min.cosmo.css">
     
     
     <!-- Bootstrap post modifications; required by https://getbootstrap.com/components/#navbar-fixed-top -->
     <style>
-      body { padding-top: 70px; }
+      body { padding-top: 50px; }
+    
+      .jumbotron{
+        color: #111;
+        background: linear-gradient(0deg, #CCCCCC, #EEEEEE);
+      }
     </style>
     
     <link rel="stylesheet" href="../styles/d3-tip.css">
@@ -61,7 +67,7 @@
     <!-- Variant using high z-order
     <a href="https://github.com/bluenote10"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 9999;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
     -->
-    <a href="https://github.com/bluenote10"><img style="position: absolute; top: 60px; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
+    <a href="https://github.com/bluenote10"><img style="position: absolute; top: 50px; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
     
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
@@ -73,6 +79,21 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="../index.html">Simple Language Benchmarks</a>
+        </div>
+    
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Benchmark<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                
+                  <li><a href="../01_Wordcount/index.html">Wordcount</a></li>
+                
+                  <li><a href="../02_BasicMatOps/index.html">Basic Matrix Operations</a></li>
+                
+              </ul>
+            </li>
+          </ul>
         </div>
     
         <!--
@@ -99,22 +120,30 @@
     </nav>
 
     <div class="container">
-      
+      <div class="jumbotron">
+        <h2>Benchmark: Wordcount</h2>
+      </div>
 
-      <h2>Benchmark: Wordcount</h2>
-<h3>Task</h3>
-<p>Perform a simple word count on a text file.
+      <div class="page-header">
+        <h3>Task</h3>
+      </div>
+
+      <p>Perform a simple word count on a text file.
 To isolate I/O from other aspects, all solutions should implement the following stages:</p>
 <ul>
 <li><strong>IO</strong>: Read entire file into memory (one large string).</li>
 <li><strong>Split</strong>: Split string on split characters: <code>'\n'</code> and <code>' '</code> (single space)</li>
 <li><strong>Count</strong>: Iterate over words to build a hash map with counts.</li>
 </ul>
-<p>Benchmark Aspects: Hash maps, basic string operations, allocation</p>
+<p>Benchmark aspects: Hash maps, basic string operations, allocation</p>
+<div class="page-header"></div>
+
 <h4>Input</h4>
 <ul>
 <li>Path of text file to read.</li>
 </ul>
+<div class="page-header"></div>
+
 <h4>Control Output</h4>
 <p>After writing the stage runtimes to STDOUT, the implementations should print:</p>
 <ul>
@@ -122,7 +151,9 @@ To isolate I/O from other aspects, all solutions should implement the following 
 <li>Sum of the counts in the map</li>
 </ul>
 
-      <h3>Implementations</h3>
+      <div class="page-header">
+        <h3>Implementations</h3>
+      </div>
 
       <ul>
         
@@ -143,7 +174,9 @@ To isolate I/O from other aspects, all solutions should implement the following 
         
       </ul>
 
-      <h3>Results</h3>
+      <div class="page-header">
+        <h3>Results</h3>
+      </div>
 
       <h4>Runtime: Total</h4>
       <p>Raw runtimes of all individual runs. Use mouse-over to see relative performance.</p>

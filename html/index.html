@@ -6,12 +6,18 @@
     <link href="https://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.4.0/d3.min.js"></script><!-- Bootstrap: Customized Theme -->
-    <link rel="stylesheet" href="./resources/bootstrap.min.css">
+    
+    <link rel="stylesheet" href="./resources/bootstrap.min.cosmo.css">
     
     
     <!-- Bootstrap post modifications; required by https://getbootstrap.com/components/#navbar-fixed-top -->
     <style>
-      body { padding-top: 70px; }
+      body { padding-top: 50px; }
+    
+      .jumbotron{
+        color: #111;
+        background: linear-gradient(0deg, #CCCCCC, #EEEEEE);
+      }
     </style>
     
     <link rel="stylesheet" href="./styles/d3-tip.css">
@@ -25,7 +31,7 @@
     <!-- Variant using high z-order
     <a href="https://github.com/bluenote10"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 9999;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
     -->
-    <a href="https://github.com/bluenote10"><img style="position: absolute; top: 60px; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
+    <a href="https://github.com/bluenote10"><img style="position: absolute; top: 50px; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
     
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
@@ -37,6 +43,21 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="index.html">Simple Language Benchmarks</a>
+        </div>
+    
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Benchmark<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                
+                  <li><a href="./01_Wordcount/index.html">Wordcount</a></li>
+                
+                  <li><a href="./02_BasicMatOps/index.html">Basic Matrix Operations</a></li>
+                
+              </ul>
+            </li>
+          </ul>
         </div>
     
         <!--
@@ -64,17 +85,82 @@
 
     <div class="container">
 
-      <h3>Benchmarks</h3>
+      <div class="jumbotron">
+        <h2>Simple Language Benchmarks</h2>
+        <div class="lead">
+          <p>Benchmark collection of random problem + language combinations.</p>
+<p>Comes with a framework making it easy to run, visualize, and contribute new solutions.
+This website is auto-generated from the results.</p>
+        </div>
+      </div>
+
+      <div>
+        <p>Disclaimer:
+This is a fun project, without putting too much though into experiment design.
+Draw conclusions at your own risk.</p>
+      </div>
+
+      <div class="page-header">
+        <h3>Benchmarks</h3>
+      </div>
 
       <ol>
         
-        <li><a href="01_Wordcount/index.html">Wordcount</a></li>
+        <li><a href="./01_Wordcount/index.html">Wordcount</a></li>
         
-        <li><a href="02_BasicMatOps/index.html">BasicMatOps</a></li>
+        <li><a href="./02_BasicMatOps/index.html">Basic Matrix Operations</a></li>
         
       </ol>
 
-      <h3>System Specs</h3>
+      <div class="page-header">
+        <h3>Philosophy</h3>
+      </div>
+      <ul>
+<li><strong>Simple solutions first</strong>: The first implementation for every language should be a non-optimized, naive, or idiomatic attempt
+  at solving the problem. This allows to get a feeling of the out-of-the-box performance of a language, i.e., the performance
+  one can expect without thinking about optimization.
+  For many languages this implies to avoid parallelization and stick to a simple single-threaded solution.
+  Additional implementations may use any kind of optimization.</li>
+<li><strong>Code elegance</strong>: Instead of trying to measure code complexity by some metric, the framework tries to make it very easy to jump into the source code
+  of each individual implementation, allowing to study the code directly on Github.</li>
+<li><strong>No excluded languages</strong>: In contrast to the <a href="http://benchmarksgame.alioth.debian.org/play.html">benchmarksgame</a>
+  no languages are forbidden per-se. In particular the goal is to add languages which are excluded in other benchmarks (e.g. Nim, Crystyl, and Julia).</li>
+</ul>
+
+      <div class="page-header">
+        <h3>About the Framework</h3>
+      </div>
+      <p>The framework allows to quickly run a set of benchmarks and generates output to visualize the results.
+All HTML on this page is auto-generated.</p>
+<p>Each benchmark problem is split into <strong>stages</strong>, i.e., the solution is computed in several steps and
+each step is measured individually (implementations are responsible themselves to measure the time for each step).
+In some cases splitting the solutions into several steps will feel slightly non-idiomatic and inefficient,
+but it comes with the benefit to disentangle e.g. I/O from the computations and in some cases reveals
+interesting results like a language being particularly good/bad in certain steps.</p>
+<p>Each benchmark is performed with three different problem <strong>sizes</strong>: Currently, each problem comes in a
+<strong>s</strong>mall, <strong>m</strong>edium, and <strong>l</strong>arge variant.</p>
+
+      <div class="page-header">
+        <h3>How to Reproduce</h3>
+      </div>
+      <p>You can run all benchmarks for yourself or even create your own set of benchmarks.
+The main framework is written in Python, and should be reproducible on any UNIX based system.</p>
+
+      <div class="page-header">
+        <h3>Contribute</h3>
+      </div>
+      <p>Contribution of any kind are highly welcome.
+In particular it would be nice to see (more) implementations e.g. for the languages:
+Nim, Rust, Go, Haskell, Closure, Kotlin, Julia, R, Crystal, Racket, Lua, Ruby, Java...</p>
+
+      <div class="page-header">
+        <h3>License</h3>
+      </div>
+      <p>This project is licensed under the terms of the MIT license.</p>
+
+      <div class="page-header">
+        <h3 id="specs">System Specs</h3>
+      </div>
 
       <p>
         All benchmarks were performed on a PC with the following specs:
