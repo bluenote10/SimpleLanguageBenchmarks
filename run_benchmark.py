@@ -13,6 +13,7 @@ import time
 import textwrap
 import platform
 import random
+import datetime
 
 import data.generators as generators
 
@@ -248,7 +249,7 @@ class BasicMatOps(object):
 
     - **IO**: Read two CSVs and construct matrices
     - **Add**: Add matrices
-    - **Count**: Multiply matrices
+    - **Multiply**: Multiply matrices
 
     Benchmark aspects: Dynamic arrays, indexing, nested loops, code elegance of matrix implementations
 
@@ -796,6 +797,7 @@ def generate_summary_html():
     html = benchmark_template.render(
         common_header=common_header,
         navbar=navbar,
+        last_update=datetime.datetime.now().date().isoformat(),
         sub_pages=sub_pages,
         sys_specs=get_sys_specs(),
         soft_specs=get_soft_specs(),

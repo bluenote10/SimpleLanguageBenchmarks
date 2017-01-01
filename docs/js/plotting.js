@@ -124,32 +124,28 @@ function visualizeCsv(csvFile, selector, scaleLinear) {
       .attr("transform", "translate(" + margins.l + ", " + margins.r + ")");
 
     // add tool tip
-    function toolTopRenderBinder(dataarg) {
-      // let globaldata = dataarg;
-      // console.log("Binding data: " + globaldata[0][colTime] + " " + globaldata[1][colTime] + " " + globaldata[1][colTime]);
-      return function toolTipRender(d, globaldata) {
-        // console.log("this = " + this);
-        var size = d[colSize];
-        var bestTime = Number.MAX_VALUE;
-        for (var i = 0; i < globaldata.length; i++) {
-          if (globaldata[i][colSize] == size && globaldata[i][colTime] < bestTime) {
-            bestTime = globaldata[i][colTime];
-          }
+    function toolTipRender(d, globaldata) {
+      // console.log("this = " + this);
+      var size = d[colSize];
+      var bestTime = Number.MAX_VALUE;
+      for (var i = 0; i < globaldata.length; i++) {
+        if (globaldata[i][colSize] == size && globaldata[i][colTime] < bestTime) {
+          bestTime = globaldata[i][colTime];
         }
-        // console.log("Using data: " + globaldata.length + " " + globaldata[0][colTime] + " " + globaldata[1][colTime] + " " + globaldata[1][colTime]);
-        var relativePerformance = (bestTime == d[colTime]) ?
-          "This is the fastest run in class " + size :
-          "Slower than fastest run: " + ((100 * d[colTime] / bestTime) - 100).toFixed(1) + " %"; // + bestTime;
-        return "Language: " + d[colLang] + "</br>" +
-          "Runtime: " + d[colTime].toFixed(3) + " sec" + "</br>" +
-          relativePerformance;
       }
+      // console.log("Using data: " + globaldata.length + " " + globaldata[0][colTime] + " " + globaldata[1][colTime] + " " + globaldata[1][colTime]);
+      var relativePerformance = (bestTime == d[colTime]) ?
+        "This is the fastest run in class " + size :
+        "Slower than fastest run: " + ((100 * d[colTime] / bestTime) - 100).toFixed(1) + " %"; // + bestTime;
+      return "Language: " + d[colLang] + "</br>" +
+        "Runtime: " + d[colTime].toFixed(3) + " sec" + "</br>" +
+        relativePerformance;
     }
-    tip = d3.tip()
+    var tip = d3.tip()
             .attr('class', 'd3-tip')
             .direction('e')
             .offset([-2, 15])
-            .html(toolTopRenderBinder(data));
+            .html(toolTipRender);
     g.call(tip);
 
     // axis
@@ -318,7 +314,7 @@ function visualizeCsvStageSummary(csvFile, selector) {
       return "Stage: " + d[colStage] + "</br>" +
         "Runtime: " + d[colTime].toFixed(3) + " sec";
     }
-    tip = d3.tip()
+    var tip = d3.tip()
             .attr('class', 'd3-tip')
             .direction('e')
             .offset([-2, 15])
@@ -375,14 +371,14 @@ function visualizeCsvStageSummary(csvFile, selector) {
      .attr("height", yScaleStages.bandwidth())
      .attr("class", (d) => "stagebar")
      .on('mouseover', function (d) {
-       //tip.show(d, data);
+       tip.show(d, data);
        g.selectAll(".stagebar")
         .filter((e) => e[colStage] != d[colStage])
         .transition()
         .style("opacity", 0.2);
       })
      .on('mouseout', function (d) {
-       //tip.hide(d);
+       tip.hide(d);
        g.selectAll(".stagebar")
         .transition()
         .style("opacity", 1.0);
