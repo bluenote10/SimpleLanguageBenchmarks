@@ -1,0 +1,3 @@
+description: Default implementation for Nim (clang)
+source-file: ../main.nim
+
