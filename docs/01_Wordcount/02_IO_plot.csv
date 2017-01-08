@@ -29,21 +29,24 @@ C++;default, clang;C++ (default, clang);L;2;0.0627833
 C++;default, clang;C++ (default, clang);L;3;0.0625164
 C++;default, clang;C++ (default, clang);L;4;0.0633014
 C++;default, clang;C++ (default, clang);L;5;0.0631074
-Nim;default;Nim (default);S;1;0.00040602684021
-Nim;default;Nim (default);S;2;0.00037693977356
-Nim;default;Nim (default);S;3;0.000367879867554
-Nim;default;Nim (default);S;4;0.000388860702515
-Nim;default;Nim (default);S;5;0.000415086746216
-Nim;default;Nim (default);M;1;0.00286412239075
-Nim;default;Nim (default);M;2;0.00307106971741
-Nim;default;Nim (default);M;3;0.00309109687805
-Nim;default;Nim (default);M;4;0.00286293029785
-Nim;default;Nim (default);M;5;0.00327086448669
-Nim;default;Nim (default);L;1;0.0310001373291
-Nim;default;Nim (default);L;2;0.0277030467987
-Nim;default;Nim (default);L;3;0.027202129364
-Nim;default;Nim (default);L;4;0.0259771347046
-Nim;default;Nim (default);L;5;0.0261058807373
+Nim;default, gcc;Nim (default, gcc);S;1;0.000334978103638
+Nim;default, gcc;Nim (default, gcc);S;2;0.000380039215088
+Nim;default, gcc;Nim (default, gcc);S;3;0.000365018844604
+Nim;default, gcc;Nim (default, gcc);M;1;0.00300598144531
+Nim;default, gcc;Nim (default, gcc);M;2;0.00337791442871
+Nim;default, gcc;Nim (default, gcc);M;3;0.00286602973938
+Nim;default, gcc;Nim (default, gcc);L;1;0.0277690887451
+Nim;default, gcc;Nim (default, gcc);L;2;0.0292499065399
+Nim;default, gcc;Nim (default, gcc);L;3;0.0258369445801
+Nim;default, clang;Nim (default, clang);S;1;0.000342845916748
+Nim;default, clang;Nim (default, clang);S;2;0.000339984893799
+Nim;default, clang;Nim (default, clang);S;3;0.000350952148438
+Nim;default, clang;Nim (default, clang);M;1;0.00302791595459
+Nim;default, clang;Nim (default, clang);M;2;0.00313997268677
+Nim;default, clang;Nim (default, clang);M;3;0.00335288047791
+Nim;default, clang;Nim (default, clang);L;1;0.0265889167786
+Nim;default, clang;Nim (default, clang);L;2;0.0287179946899
+Nim;default, clang;Nim (default, clang);L;3;0.0254850387573
 Python;default;Python (default);S;1;0.000327110290527
 Python;default;Python (default);S;2;0.000478982925415
 Python;default;Python (default);S;3;0.000456094741821

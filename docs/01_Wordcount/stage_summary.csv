@@ -5,9 +5,12 @@ C++;default, gcc;C++ (default, gcc);Count;1.0966
 C++;default, clang;C++ (default, clang);IO;0.0631074
 C++;default, clang;C++ (default, clang);Split;2.14225
 C++;default, clang;C++ (default, clang);Count;1.22627
-Nim;default;Nim (default);IO;0.027202129364
-Nim;default;Nim (default);Split;0.856487035751
-Nim;default;Nim (default);Count;1.24294400215
+Nim;default, gcc;Nim (default, gcc);IO;0.0277690887451
+Nim;default, gcc;Nim (default, gcc);Split;0.843291044235
+Nim;default, gcc;Nim (default, gcc);Count;1.28143715858
+Nim;default, clang;Nim (default, clang);IO;0.0265889167786
+Nim;default, clang;Nim (default, clang);Split;0.801571846008
+Nim;default, clang;Nim (default, clang);Count;1.28197717667
 Python;default;Python (default);IO;0.0181741714478
 Python;default;Python (default);Split;1.18239998817
 Python;default;Python (default);Count;2.50383782387
