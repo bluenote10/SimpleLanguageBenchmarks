@@ -1,0 +1,4 @@
+lang;descr;label;stage;time
+Python;default;Python (default);NaiveRec;3.79633998871
+Python;default;Python (default);TailRec;0.00232410430908
+Python;default;Python (default);Iterative;0.00100803375244

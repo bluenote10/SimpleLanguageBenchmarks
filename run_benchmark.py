@@ -128,6 +128,98 @@ def html_path_stage_summary_csv(benchmark_name, stage_id, stage):
     )
 
 
+class Fibonacci(object):
+
+    title = "Fibonacci"
+
+    description = textwrap.dedent("""\
+    Compute Fibonacci number N using three different implementations.
+    Each version will be run in a separate benchmark stage:
+
+    - **NaiveRec**: Version using the naive recursion.
+    - **TailRec**: Version using the tail recursion.
+    - **Iterative**: Iterative version using loops.
+
+    Benchmark aspects: Recursion
+
+    <div class="page-header"></div>
+    #### Input
+
+    - N1 -- Fibonacci number to be used for the naive version.
+    - N2 -- Fibonacci number to be used for the tail-recursive and iterative approach.
+
+    <div class="page-header"></div>
+    #### Control Output
+
+    After writing the stage runtimes to STDOUT, the implementations should print:
+
+    - Fibonacci number of each stage
+
+    """)
+
+    sizes = {
+        Sizes.S: (32, 50),
+        Sizes.M: (34, 100),
+        Sizes.L: (36, 200),
+    }
+
+    stages = ["Total", "NaiveRec", "TailRec", "Iterative"]
+
+    linear_scales = {
+        "Total": True,
+        "NaiveRec": True,
+        "TailRec": True,
+        "Iterative": True,
+    }
+
+    @staticmethod
+    def benchmark_args(size):
+        return [str(N) for N in Fibonacci.sizes[size]]
+
+    @staticmethod
+    def ensure_data_exists():
+        pass
+
+    @staticmethod
+    def result_extractor(b_entry):
+        # TODO: rewrite finally...
+        runtimes_io = []
+        runtimes_split = []
+        runtimes_count = []
+        for size in Sizes:
+            files = b_entry.result_files(size)
+            for fn in files:
+                with open(fn) as f:
+                    try:
+                        t1 = float(f.readline())
+                        t2 = float(f.readline())
+                        t3 = float(f.readline())
+                        runtimes_io.append(t1)
+                        runtimes_split.append(t2)
+                        runtimes_count.append(t3)
+                    except ValueError, e:
+                        print(
+                            AnsiColors.FAIL +
+                            "Output did not fulfil expected format:" +
+                            AnsiColors.ENDC
+                        )
+                        print(traceback.format_exc())
+
+        N = len(runtimes_io)
+        runtimes_total = [
+            runtimes_io[i] + runtimes_split[i] + runtimes_count[i]
+            for i in xrange(N)
+        ]
+
+        result = {
+            "Total": runtimes_total,
+            "NaiveRec": runtimes_io,
+            "TailRec": runtimes_split,
+            "Iterative": runtimes_count,
+        }
+        return result
+
+
 class Wordcount(object):
 
     title = "Wordcount"
@@ -357,11 +449,13 @@ class BasicMatOps(object):
 benchmark_meta = {
     "Wordcount": Wordcount,
     "BasicMatOps": BasicMatOps,
+    "Fibonacci": Fibonacci,
 }
 
 benchmark_id = {
     "Wordcount": 1,
     "BasicMatOps": 2,
+    "Fibonacci": 3,
 }
 
 
@@ -459,11 +553,17 @@ class Benchmark(object):
         if len(stderr) > 0:
             raise RuntimeError(stderr)
 
-        # TODO handle return codes
         print("Return code: {}".format(p.returncode))
+        if p.returncode != 0:
+            print_error(
+                "Run has failed."
+            )
+            print("STDOUT:\n" + stdout)
+            print("STDERR:\n" + stderr)
 
-        print("Read stdout of length: {}".format(len(stdout)))
-        print(stdout)
+        else:
+            print("Read stdout of length: {}".format(len(stdout)))
+            print(stdout)
 
         out_path = stdout_filename
         ensure_dir_exists(out_path)
