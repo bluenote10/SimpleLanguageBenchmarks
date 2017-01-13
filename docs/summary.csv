@@ -1,0 +1,20 @@
+benchmark;lang;descr;label;time
+Wordcount;C++;default, gcc;C++ (default, gcc);3.3443233
+Wordcount;C++;default, clang;C++ (default, clang);3.4492774
+Wordcount;Nim;default, gcc;Nim (default, gcc);2.15397810936
+Wordcount;Nim;default, clang;Nim (default, clang);2.11219716072
+Wordcount;Python;default;Python (default);3.70247983933
+Wordcount;Scala;default;Scala (default);6.097307049
+BasicMatOps;C++;default, gcc;C++ (default, gcc);0.20321245
+BasicMatOps;C++;default, clang;C++ (default, clang);0.202242153
+BasicMatOps;Nim;default, gcc;Nim (default, gcc);0.263345956802
+BasicMatOps;Nim;default, clang;Nim (default, clang);0.293244123459
+BasicMatOps;Python;default;Python (default);20.0496227741
+BasicMatOps;Python;numpy;Python (numpy);0.320621013641
+BasicMatOps;Scala;default;Scala (default);0.491745774
+Fibonacci;C++;default, gcc;C++ (default, gcc);0.1698598
+Fibonacci;C++;default, clang;C++ (default, clang);0.21096102
+Fibonacci;Nim;default, gcc;Nim (default, gcc);0.160243272781
+Fibonacci;Nim;default, clang;Nim (default, clang);0.216470956802
+Fibonacci;Python;default;Python (default);13.6012501717
+Fibonacci;Scala;default;Scala (default);0.137349848

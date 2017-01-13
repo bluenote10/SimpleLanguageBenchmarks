@@ -470,15 +470,7 @@ benchmark_id = {
 }
 
 
-class Benchmark(object):
-    """
-    Better names?
-        BenchmarkEntry
-        BenchmarkLocator
-        BenchmarkEntryLocator
-        ImplementationLocator
-        ResultLocator
-    """
+class BenchmarkEntry(object):
 
     def __init__(self, language, benchmark_id, benchmark_name, impl_id, impl_name):
         self.language = language
@@ -625,8 +617,13 @@ def discover_benchmark_entries(prefix):
             impl_name = m.group(5)
             # print(language, benchmark_name, impl_name)
             entries += [
-                Benchmark(language, benchmark_id, benchmark_name, impl_id, impl_name)
+                BenchmarkEntry(language, benchmark_id, benchmark_name, impl_id, impl_name)
             ]
+
+    # make sure entries are sorted by benchmark, language, implemention
+    entries.sort(key=lambda x:
+        (x.benchmark_id, x.language, x.impl_id, x.impl_path)
+    )
 
     return entries
 
@@ -721,6 +718,22 @@ def locate_sub_pages(relative_path="."):
     return sub_pages
 
 
+def get_median_runtime_of_largest_size(run_times):
+    filtered_run_times = []
+    num_repetitions = len(run_times) // len(Sizes)
+    for i, value in enumerate(run_times):
+        size = {
+            0: Sizes.S,
+            1: Sizes.M,
+            2: Sizes.L,
+        }[i // num_repetitions]
+        # filter on largest results
+        if size == Sizes.L:
+            filtered_run_times.append(value)
+
+    return np.median(filtered_run_times)
+
+
 def write_raw_runtime_csv(benchmark_name, run_times_per_stage, benchmark_entries, meta_data):
 
     for stage_id, stage in enumerate(meta_data.stages, 1):
@@ -766,28 +779,15 @@ def write_stage_summary_csv(benchmark_name, run_times_per_stage, benchmark_entri
             if stage == "Total":
                 continue
 
-            filtered_run_times = []
-
             run_times = run_times_per_stage[b_entry][stage]
-            num_repetitions = len(run_times) // len(Sizes)
-            for i, value in enumerate(run_times):
-                size = {
-                    0: Sizes.S,
-                    1: Sizes.M,
-                    2: Sizes.L,
-                }[i // num_repetitions]
-                # filter on largest results
-                if size == Sizes.L:
-                    filtered_run_times.append(value)
-
-            median_runtime = np.median(filtered_run_times)
+            median_of_largest_size = get_median_runtime_of_largest_size(run_times)
 
             row = {
                 "lang": b_entry.language,
                 "descr": b_entry.impl_suffix,
                 "label": b_entry.language + " (" + b_entry.impl_suffix + ")",
                 "stage": stage,
-                "time": median_runtime
+                "time": median_of_largest_size
             }
             rows.append(row)
 
@@ -883,8 +883,44 @@ def generate_benchmark_html(name, benchmark_entries, meta_data):
         f.write(html)
 
 
-def generate_summary_html():
+def write_general_summary_csv(affected_benchmarks, all_benchmark_entries):
+
+    max_runtimes = dict()
+    for benchmark_name in affected_benchmarks:
+        benchmark_entries = [
+            b_entry for b_entry in all_benchmark_entries
+            if b_entry.benchmark_name == benchmark_name
+            ]
+        meta_data = benchmark_meta[benchmark_name]
+
+        def get_max_runtime(b_entry):
+            per_stage_result = meta_data.result_extractor(b_entry)
+            return get_median_runtime_of_largest_size(per_stage_result["Total"])
+
+        for b_entry in benchmark_entries:
+            max_runtimes[b_entry] = get_max_runtime(b_entry)
+
+    rows = []
+    for b_entry in all_benchmark_entries:
+        rows += [{
+            "benchmark": b_entry.benchmark_name,
+            "lang": b_entry.language,
+            "descr": b_entry.impl_suffix,
+            "label": b_entry.language + " (" + b_entry.impl_suffix + ")",
+            "time": max_runtimes[b_entry]
+        }]
+
+    csv_filename = os.path.join(html_path(), "summary.csv")
+    write_csv_with_schema(
+        csv_filename, rows,
+        schema=["benchmark", "lang", "descr", "label", "time"]
+    )
+
+
+def generate_summary_html(affected_benchmarks, all_benchmark_entries):
     print_bold("\nRendering main html")
+
+    write_general_summary_csv(affected_benchmarks, all_benchmark_entries)
 
     sub_pages = locate_sub_pages(".")
 
@@ -910,8 +946,8 @@ def generate_summary_html():
         navbar=navbar,
         last_update=datetime.datetime.now().date().isoformat(),
         sub_pages=sub_pages,
-        sys_specs=get_sys_specs(),
-        soft_specs=get_soft_specs(),
+        sys_specs=get_system_specs(),
+        soft_specs=get_software_specs(),
         **markdown_fragments
     )
 
@@ -994,7 +1030,7 @@ def secure_execution(func, label):
         return "failed to determine"
 
 
-def get_sys_specs():
+def get_system_specs():
 
     def get_mem():
         mem_total_kB = float(match_line_from_file('/proc/meminfo', 'MemTotal:\s+(\d+)'))
@@ -1057,7 +1093,7 @@ def get_line_from_command(command, lineno=0):
     return lines[lineno]
 
 
-def get_soft_specs():
+def get_software_specs():
     spec_getters = [
         ("GCC", lambda: get_line_from_command("gcc --version")),
         ("Clang", lambda: get_line_from_command("clang++-3.8 --version")),
@@ -1135,7 +1171,7 @@ def main():
             meta_data = benchmark_meta[benchmark_name]
             generate_benchmark_html(benchmark_name, entries_of_benchmark, meta_data)
 
-        generate_summary_html()
+        generate_summary_html(affected_benchmarks, all_benchmark_entries)
         generate_summary_markdown()
 
 
