@@ -41,27 +41,29 @@ def fibonacci_iterative(N):
 
 if len(sys.argv) != 3:
     sys.exit(1)
-N1 = int(sys.argv[1])
-N2 = int(sys.argv[2])
+N = int(sys.argv[1])
+M = int(sys.argv[2])
 
 
 # Note: Crashes without explicitly increasing recursion limit
-sys.setrecursionlimit(N2*2)
+sys.setrecursionlimit(N*2)
 
 
 with TimedContext():
-    f1 = fibonacci_naive(N1)
+    f1 = fibonacci_naive(N)
 
 with TimedContext():
-    sum_f2 = 0
-    for N in xrange(N2):
-        sum_f2 += fibonacci_tailrec(N)
+    checksum_f2 = 0
+    for i in xrange(M):
+        checksum_f2 += fibonacci_tailrec(N)
+        checksum_f2 %= 2147483647
 
 with TimedContext():
-    sum_f3 = 0
-    for N in xrange(N2):
-        sum_f3 += fibonacci_iterative(N)
+    checksum_f3 = 0
+    for i in xrange(M):
+        checksum_f3 += fibonacci_iterative(N)
+        checksum_f3 %= 2147483647
 
 print(f1)
-print(sum_f2)
-print(sum_f3)
+print(checksum_f2)
+print(checksum_f3)

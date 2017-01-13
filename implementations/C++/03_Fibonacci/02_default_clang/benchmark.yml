@@ -1,0 +1,3 @@
+description: Default implementation for C++, clang (O3)
+source-file: ../default_main.cpp
+
