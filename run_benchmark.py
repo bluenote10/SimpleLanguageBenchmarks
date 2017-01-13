@@ -133,43 +133,54 @@ class Fibonacci(object):
     title = "Fibonacci"
 
     description = textwrap.dedent("""\
-    Compute Fibonacci number N using three different implementations.
-    Each version will be run in a separate benchmark stage:
+    Compute the N-th Fibonacci using three different, popular implementations:
 
-    - **NaiveRec**: Version using the naive recursion.
-    - **TailRec**: Version using the tail recursion.
-    - **Iterative**: Iterative version using loops.
+    - **Naive Recursion**: Version using the naive recursion (1 iteration).
+    - **Tail Recursion**: Version using the tail recursion (M iterations).
+    - **Iterative**: Iterative version using loops (M iterations).
+
+    Each version will be run in a separate benchmark stage.
+    In order to bring the tail-recursive and the iterative versions
+    in a measurable range (if possible at all), the implementations have to
+    repeat the computation M times, updating a checksum according to:
+
+        checksum = 0
+        for i in 0 .. <M:
+            checksum += fibonacci_iterative(N)
+            checksum %= 2147483647
 
     Benchmark aspects: Recursion
 
     <div class="page-header"></div>
     #### Input
 
-    - N1 -- Fibonacci number to be used for the naive version.
-    - N2 -- Fibonacci number to be used for the tail-recursive and iterative approach.
+    - N -- The Fibonacci number to compute.
+    - M -- The number of iterations to repeat the tail-recursive and iterative implementations.
 
     <div class="page-header"></div>
     #### Control Output
 
     After writing the stage runtimes to STDOUT, the implementations should print:
 
-    - Fibonacci number of each stage
+    - N-th Fibonacci result (result from first stage)
+    - checksum from second stage
+    - checksum from third stage
 
     """)
 
     sizes = {
-        Sizes.S: (32, 50),
-        Sizes.M: (34, 100),
-        Sizes.L: (36, 200),
+        Sizes.S: (34, int(1.45 ** 32)),
+        Sizes.M: (36, int(1.45 ** 34)),
+        Sizes.L: (38, int(1.45 ** 36)),
     }
 
-    stages = ["Total", "NaiveRec", "TailRec", "Iterative"]
+    stages = ["Total", "Naive Recursion", "Tail Recursion", "Iterative"]
 
     linear_scales = {
-        "Total": True,
-        "NaiveRec": True,
-        "TailRec": True,
-        "Iterative": True,
+        "Total": False,
+        "Naive Recursion": False,
+        "Tail Recursion": False,
+        "Iterative": False,
     }
 
     @staticmethod
@@ -213,8 +224,8 @@ class Fibonacci(object):
 
         result = {
             "Total": runtimes_total,
-            "NaiveRec": runtimes_io,
-            "TailRec": runtimes_split,
+            "Naive Recursion": runtimes_io,
+            "Tail Recursion": runtimes_split,
             "Iterative": runtimes_count,
         }
         return result

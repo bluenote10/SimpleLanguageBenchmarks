@@ -145,27 +145,37 @@
         <h3>Task</h3>
       </div>
 
-      <p>Compute Fibonacci number N using three different implementations.
-Each version will be run in a separate benchmark stage:</p>
+      <p>Compute the N-th Fibonacci using three different, popular implementations:</p>
 <ul>
-<li><strong>NaiveRec</strong>: Version using the naive recursion.</li>
-<li><strong>TailRec</strong>: Version using the tail recursion.</li>
-<li><strong>Iterative</strong>: Iterative version using loops.</li>
+<li><strong>Naive Recursion</strong>: Version using the naive recursion (1 iteration).</li>
+<li><strong>Tail Recursion</strong>: Version using the tail recursion (M iterations).</li>
+<li><strong>Iterative</strong>: Iterative version using loops (M iterations).</li>
 </ul>
+<p>Each version will be run in a separate benchmark stage.
+In order to bring the tail-recursive and the iterative versions
+in a measurable range (if possible at all), the implementations have to
+repeat the computation M times, updating a checksum according to:</p>
+<pre><code>checksum = 0
+for i in 0 .. &lt;M:
+    checksum += fibonacci_iterative(N)
+    checksum %= 2147483647
+</code></pre>
 <p>Benchmark aspects: Recursion</p>
 <div class="page-header"></div>
 
 <h4>Input</h4>
 <ul>
-<li>N1 -- Fibonacci number to be used for the naive version.</li>
-<li>N2 -- Fibonacci number to be used for the tail-recursive and iterative approach.</li>
+<li>N -- The Fibonacci number to compute.</li>
+<li>M -- The number of iterations to repeat the tail-recursive and iterative implementations.</li>
 </ul>
 <div class="page-header"></div>
 
 <h4>Control Output</h4>
 <p>After writing the stage runtimes to STDOUT, the implementations should print:</p>
 <ul>
-<li>Fibonacci number of each stage</li>
+<li>N-th Fibonacci result (result from first stage)</li>
+<li>checksum from second stage</li>
+<li>checksum from third stage</li>
 </ul>
 
       <div class="page-header">
@@ -174,7 +184,22 @@ Each version will be run in a separate benchmark stage:</p>
 
       <ul>
         
+          <li><a href="https://github.com/bluenote10/SimpleLanguageBenchmarks/blob/master/implementations/C++/03_Fibonacci/01_default_gcc/../default_main.cpp#L1" type="text/plain">C++</a>: Default implementation for C++, gcc (O3) </li>
+          
+        
+          <li><a href="https://github.com/bluenote10/SimpleLanguageBenchmarks/blob/master/implementations/C++/03_Fibonacci/02_default_clang/../default_main.cpp#L1" type="text/plain">C++</a>: Default implementation for C++, clang (O3) </li>
+          
+        
+          <li><a href="https://github.com/bluenote10/SimpleLanguageBenchmarks/blob/master/implementations/Nim/03_Fibonacci/01_default_gcc/../main.nim#L1" type="text/plain">Nim</a>: Default implementation for Nim (gcc) </li>
+          
+        
+          <li><a href="https://github.com/bluenote10/SimpleLanguageBenchmarks/blob/master/implementations/Nim/03_Fibonacci/02_default_clang/../main.nim#L1" type="text/plain">Nim</a>: Default implementation for Nim (clang) </li>
+          
+        
           <li><a href="https://github.com/bluenote10/SimpleLanguageBenchmarks/blob/master/implementations/Python/03_Fibonacci/01_default/main.py#L1" type="text/plain">Python</a>: Default implementation for Python </li>
+          
+        
+          <li><a href="https://github.com/bluenote10/SimpleLanguageBenchmarks/blob/master/implementations/Scala/03_Fibonacci/01_default/src/main/scala/main.scala#L1" type="text/plain">Scala</a>: Default implementation for Scala </li>
           
         
       </ul>
@@ -201,7 +226,7 @@ Each version will be run in a separate benchmark stage:</p>
         Use mouse-over to see relative performance.
       </p>
       <div id="plot1"></div>
-      <h4>Runtime: NaiveRec</h4>
+      <h4>Runtime: Naive Recursion</h4>
       <p>
         All raw runtimes of individual runs for
         <span class="size-s">small</span>, <span class="size-m">medium</span>, and <span class="size-l">large</span>
@@ -209,7 +234,7 @@ Each version will be run in a separate benchmark stage:</p>
         Use mouse-over to see relative performance.
       </p>
       <div id="plot2"></div>
-      <h4>Runtime: TailRec</h4>
+      <h4>Runtime: Tail Recursion</h4>
       <p>
         All raw runtimes of individual runs for
         <span class="size-s">small</span>, <span class="size-m">medium</span>, and <span class="size-l">large</span>
@@ -239,10 +264,10 @@ Each version will be run in a separate benchmark stage:</p>
     <script type="text/javascript">
       visualizeCsvStageSummary("stage_summary.csv", "#stage-summary");
 
-      visualizeCsv("01_Total_plot.csv", "#plot1", true);
-      visualizeCsv("02_NaiveRec_plot.csv", "#plot2", true);
-      visualizeCsv("03_TailRec_plot.csv", "#plot3", true);
-      visualizeCsv("04_Iterative_plot.csv", "#plot4", true);
+      visualizeCsv("01_Total_plot.csv", "#plot1", false);
+      visualizeCsv("02_Naive Recursion_plot.csv", "#plot2", false);
+      visualizeCsv("03_Tail Recursion_plot.csv", "#plot3", false);
+      visualizeCsv("04_Iterative_plot.csv", "#plot4", false);
       
     </script>
 
