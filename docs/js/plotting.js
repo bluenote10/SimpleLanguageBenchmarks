@@ -416,6 +416,7 @@ function visualizeCsvGeneralSummary(csvFile, selector) {
   var colTime = "time";
   var colRank = "rank";
   var colRelative = "relative";
+  var colUrl = "url";
 
   var margins = { l: 150, r: 30, t: 100, b: 50 };
 
@@ -534,6 +535,8 @@ function visualizeCsvGeneralSummary(csvFile, selector) {
     svg.selectAll("matrixview")
        .data(data)
        .enter()
+       .append("svg:a")
+       .attr("xlink:href", d => "https://github.com/bluenote10/SimpleLanguageBenchmarks/blob/master/" + d[colUrl])
        //.append("rect")
        //.attr("x", d => xScale(d[colBenchmark]) - blockSize/2)
        //.attr("y", d => yScale(d[colLabel]) - blockSize/2)
@@ -544,7 +547,7 @@ function visualizeCsvGeneralSummary(csvFile, selector) {
        .attr("cy", d => yScale(d[colLabel]))
        .attr("r", blockSize / 2)
        .attr("fill", d => allColorScales[d[colBenchmark]](d[colTime]).replace(')', ', 0.75)').replace('rgb', 'rgba'))
-       .attr("stroke", "#0006")
+       .attr("stroke", "#999")
        .attr("class", "matrixview")
        .on('mouseover', function (d) {
          tip.show(d);
@@ -558,7 +561,7 @@ function visualizeCsvGeneralSummary(csvFile, selector) {
          d3.select(this)
            .transition()
            .duration(100)
-           .attr("stroke", "#0006")
+           .attr("stroke", "#999")
            .attr("r", blockSize/2);
          tip.hide(d);
        });

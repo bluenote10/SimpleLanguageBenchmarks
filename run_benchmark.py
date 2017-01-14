@@ -478,6 +478,7 @@ class BenchmarkEntry(object):
         self.benchmark_name = benchmark_name
         self.impl_id = int(impl_id)
         self.impl_name = impl_name
+        self.meta_data = self._load_meta_data()
 
     @property
     def impl_path(self):
@@ -573,7 +574,7 @@ class BenchmarkEntry(object):
         f = open(out_path, "w")
         f.write(stdout)
 
-    def get_meta_data(self):
+    def _load_meta_data(self):
         path = os.path.join(self.impl_path, "benchmark.yml")
         try:
             with open(path) as f:
@@ -590,6 +591,18 @@ class BenchmarkEntry(object):
                 print_error("[ERROR] Failed to parse YAML:")
                 print(exc)
         return meta_data
+
+    @property
+    def source_url(self):
+        if self.meta_data.get("source-file") is None:
+            return None
+        else:
+            url = self.impl_path + "/" + self.meta_data["source-file"]
+            return url
+
+    @property
+    def source_description(self):
+        return self.meta_data.get("description") or ""
 
     def __repr__(self):
         return "BenchmarkEntry({}, {}, {})".format(
@@ -839,13 +852,9 @@ def generate_benchmark_html(name, benchmark_entries, meta_data):
     # get implementation paths
     impl_locs = []
     for b_entry in benchmark_entries:
-        entry_meta_data = b_entry.get_meta_data()
-        if entry_meta_data is not None and "source-file" in entry_meta_data:
-            url = b_entry.impl_path + "/" + entry_meta_data["source-file"]
-            descr = entry_meta_data.get("description") or ""
-            impl_locs += [(b_entry.language, url, descr)]
-        else:
-            impl_locs += [(b_entry.language, None, "")]
+        impl_locs += [
+            (b_entry.language, b_entry.source_url, b_entry.source_description)
+        ]
 
     # compile html
     html_description = markdown.markdown(meta_data.description)
@@ -924,6 +933,7 @@ def write_general_summary_csv(affected_benchmarks, all_benchmark_entries):
             "benchmark": b_entry.benchmark_name,
             "lang": b_entry.language,
             "descr": b_entry.impl_suffix,
+            "url": b_entry.source_url,
             "label": b_entry.language + " (" + b_entry.impl_suffix + ")",
             "time": runtimes[b_entry],
             "relative": relative_runtimes[b_entry],
@@ -933,7 +943,7 @@ def write_general_summary_csv(affected_benchmarks, all_benchmark_entries):
     csv_filename = os.path.join(html_path(), "summary.csv")
     write_csv_with_schema(
         csv_filename, rows,
-        schema=["benchmark", "lang", "descr", "label", "time", "relative", "rank"]
+        schema=["benchmark", "lang", "descr", "url", "label", "time", "relative", "rank"]
     )
 
 
