@@ -1,0 +1,58 @@
+.svg-debug {
+  border: 1px solid #000;
+}
+
+.svg-centered {
+  display: block;
+  margin: auto;
+}
+
+.langlabels {
+  font-family: 'PT Sans', sans-serif;
+  font-size: 12px;
+}
+.rank-label {
+  font-size: 10px;
+}
+
+.circle-test {
+  stroke: #124563;
+  fill: #12456355;
+}
+.circlerun1 {
+  stroke: hsla(136, 78%, 45%, 1);
+  fill:   hsla(136, 78%, 45%, 0.1);
+}
+.circlerun2 {
+  stroke: hsla(221, 76%, 48%, 1);
+  fill:   hsla(221, 76%, 48%, 0.1);
+}
+.circlerun3 {
+  stroke: hsla(0, 96%, 59%, 1);
+  fill:   hsla(0, 96%, 59%, 0.1);
+}
+
+.size-s {
+  color: hsla(136, 78%, 45%, 1);
+}
+.size-m {
+  color: hsla(221, 76%, 48%, 1);
+}
+.size-l {
+  color: hsla(0, 96%, 59%, 1);
+}
+
+.stagebar {
+  stroke: rgba(0, 0, 0, 1);
+  fill:   rgba(0, 0, 0, 0.5);
+}
+
+.tickasdf {
+  font-family: 'PT Sans', sans-serif;
+  font-size: 12px;
+}
+
+/* required for superscript in axis labels */
+.axis tspan {
+  font-size: 9px;
+}

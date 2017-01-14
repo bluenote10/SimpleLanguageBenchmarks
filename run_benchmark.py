@@ -620,9 +620,8 @@ def discover_benchmark_entries(prefix):
                 BenchmarkEntry(language, benchmark_id, benchmark_name, impl_id, impl_name)
             ]
 
-    # make sure entries are sorted by benchmark, language, implemention
     entries.sort(key=lambda x:
-        (x.benchmark_id, x.language, x.impl_id, x.impl_path)
+        (x.language, x.benchmark_id, x.impl_id, x.impl_path)
     )
 
     return entries
@@ -885,7 +884,10 @@ def generate_benchmark_html(name, benchmark_entries, meta_data):
 
 def write_general_summary_csv(affected_benchmarks, all_benchmark_entries):
 
-    max_runtimes = dict()
+    runtimes = dict()
+    relative_runtimes = dict()
+    ranks = dict()
+
     for benchmark_name in affected_benchmarks:
         benchmark_entries = [
             b_entry for b_entry in all_benchmark_entries
@@ -897,8 +899,24 @@ def write_general_summary_csv(affected_benchmarks, all_benchmark_entries):
             per_stage_result = meta_data.result_extractor(b_entry)
             return get_median_runtime_of_largest_size(per_stage_result["Total"])
 
+        runtimes_this_benchmark = dict()
         for b_entry in benchmark_entries:
-            max_runtimes[b_entry] = get_max_runtime(b_entry)
+            runtimes_this_benchmark[b_entry] = get_max_runtime(b_entry)
+
+        fastest = min(runtimes_this_benchmark.values())
+
+        # for the time being a quadratic implementation suffices, improve if necessary
+        for b_entry in benchmark_entries:
+            runtime = runtimes_this_benchmark[b_entry]
+            faster_entries = [
+                other_entry for other_entry, other_time in runtimes_this_benchmark.iteritems()
+                if other_time < runtime
+            ]
+
+            # update global dicts
+            runtimes[b_entry] = runtime
+            ranks[b_entry] = len(faster_entries) + 1
+            relative_runtimes[b_entry] = runtime / fastest
 
     rows = []
     for b_entry in all_benchmark_entries:
@@ -907,13 +925,15 @@ def write_general_summary_csv(affected_benchmarks, all_benchmark_entries):
             "lang": b_entry.language,
             "descr": b_entry.impl_suffix,
             "label": b_entry.language + " (" + b_entry.impl_suffix + ")",
-            "time": max_runtimes[b_entry]
+            "time": runtimes[b_entry],
+            "relative": relative_runtimes[b_entry],
+            "rank": ranks[b_entry],
         }]
 
     csv_filename = os.path.join(html_path(), "summary.csv")
     write_csv_with_schema(
         csv_filename, rows,
-        schema=["benchmark", "lang", "descr", "label", "time"]
+        schema=["benchmark", "lang", "descr", "label", "time", "relative", "rank"]
     )
 
 

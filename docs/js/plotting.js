@@ -16,14 +16,17 @@ function curry(fn) {
 function uniqueMaintainOrder(data, getter) {
   var arr = [];
   var arrayLength = data.length;
+  var elementSet = {};
   for (var i = 0; i < arrayLength; i++) {
     var value = getter(data[i]);
     if (arr.length == 0) {
       arr.push(value);
+      elementSet[value] = true;
     } else {
-      var last_element = arr[arr.length - 1];
-      if (last_element != value) {
+      var has_element = elementSet.hasOwnProperty(value);
+      if (!has_element) {
         arr.push(value);
+        elementSet[value] = true;
       }
     }
   }
@@ -121,7 +124,7 @@ function visualizeCsv(csvFile, selector, scaleLinear) {
       .attr("height", canvasSizeOuter.h);
 
     var g = svg.append("g")
-      .attr("transform", "translate(" + margins.l + ", " + margins.r + ")");
+      .attr("transform", "translate(" + margins.l + ", " + margins.t + ")");
 
     // add tool tip
     function toolTipRender(d, globaldata) {
@@ -307,7 +310,7 @@ function visualizeCsvStageSummary(csvFile, selector) {
       .attr("height", canvasSizeOuter.h);
 
     var g = svg.append("g")
-      .attr("transform", "translate(" + margins.l + ", " + margins.r + ")");
+      .attr("transform", "translate(" + margins.l + ", " + margins.t + ")");
 
     // add tool tip
     function toolTipRender(d, globaldata) {
@@ -392,6 +395,181 @@ function visualizeCsvStageSummary(csvFile, selector) {
 
   // https://github.com/d3/d3-request/blob/master/README.md#csv
   // https://github.com/d3/d3-dsv#dsv_parse
+  d3.request(csvFile)
+    .mimeType("text/csv")
+    .response(function(xhr) { return d3.dsvFormat(";").parse(xhr.responseText, rowFormatter); })
+    .get(render);
+}
+
+
+function visualizeCsvGeneralSummary(csvFile, selector) {
+  console.log("Rendering general summary " + csvFile + " into " + selector);
+
+  var markersize = 5;
+  var rowHeight = 25;
+  var blockSize = 20;
+  var topLabelMargin = 20;
+
+  var colBenchmark = "benchmark";
+  var colLabel = "label";
+  var colLang = "lang";
+  var colTime = "time";
+  var colRank = "rank";
+  var colRelative = "relative";
+
+  var margins = { l: 150, r: 30, t: 100, b: 50 };
+
+  function render(data) {
+
+    var dataLanguages = uniqueMaintainOrder(data, (d) => d[colLabel]);
+    var dataBenchmarks = uniqueMaintainOrder(data, (d) => d[colBenchmark]);
+
+    var numRows = dataLanguages.length;
+    var numCols = dataBenchmarks.length;
+    console.log(dataLanguages);
+    console.log(dataBenchmarks);
+    console.log(data);
+    console.log(numRows);
+    console.log(numCols);
+
+    var width = ((numCols-1) * rowHeight) + margins.l + margins.r;
+    var height = ((numRows-1) * rowHeight) + margins.t + margins.b;
+    var canvasSizeOuter = { w: width, h: height };
+    var canvasSizeInner = {
+      w: canvasSizeOuter.w - margins.l - margins.r,
+      h: canvasSizeOuter.h - margins.t - margins.b
+    };
+
+    var xScale = d3
+      .scalePoint()
+      .range([0, canvasSizeInner.w])
+      .domain(dataBenchmarks);
+    var yScale = d3
+      .scalePoint()
+      .range([0, canvasSizeInner.h])
+      .domain(dataLanguages);
+
+    var allColorScales = {}
+    for (var i = 0; i < dataBenchmarks.length; i++) {
+      // determine min/max
+      var benchmarkName = dataBenchmarks[i];
+      var dataSubset = data.filter(d => d[colBenchmark] == benchmarkName).map(d => d[colTime])
+      //var min = d3.min(dataSubset);
+      //var max = d3.max(dataSubset);
+      var midpoint =
+        //Math.pow(base, (Math.log(max)+Math.log(min))/2);
+        //d3.mean(dataSubset);
+        d3.median(dataSubset);
+      var sdev = d3.deviation(dataSubset);
+      var min = d3.min(dataSubset);
+      var max = midpoint + 3*sdev;
+      console.log("min: " + min);
+      console.log("max: " + max);
+      console.log("midpoint: " + midpoint)
+      var colorScale = d3
+        .scaleLog()
+        .range(["green", "#CCC", "red"])
+        .domain([min, midpoint, max])
+        .clamp([min, midpoint, max]);
+      allColorScales[benchmarkName] = colorScale;
+    }
+
+    var svg = d3
+      .select(selector)
+      .append("svg")
+      .attr("width", canvasSizeOuter.w)
+      .attr("height", canvasSizeOuter.h)
+      //.attr("class", "svg-centered")
+      .append("g")
+      .attr("transform", "translate(" + margins.l + ", " + margins.t + ")");
+
+    // add tool tip
+    function toolTipRender(d) {
+      return "Runtime: " + d[colTime].toFixed(3) + " sec <br/>" +
+             "Factor relative to fastest: " + d[colRelative].toFixed(3);
+    }
+    var tip = d3
+      .tip()
+      .attr('class', 'd3-tip')
+      .direction('e')
+      .offset([-2, 15])
+      .html(toolTipRender);
+    svg.call(tip);
+
+    // add language labels
+    var labels = svg
+      .selectAll(".labels")
+      .data(dataLanguages)
+      .enter()
+      .append("text")
+      .attr("x", -margins.l)
+      .attr("y", function (lang) { return yScale(lang); })
+      .attr("class", "langlabels")
+      .attr("dominant-baseline", "middle")
+      .text(function (lang) { return lang; });
+    var labels = svg
+      .selectAll(".labels")
+      .data(dataBenchmarks)
+      .enter()
+      .append("text")
+      .attr("x", function (bench) { return xScale(bench); })
+      .attr("y", -topLabelMargin)
+      .attr("transform", (bench) => "rotate(-90, " + xScale(bench) + ", " + -topLabelMargin + ")")
+      .attr("class", "langlabels")
+      .attr("dominant-baseline", "middle")
+      .text(function (bench) { return bench; });
+
+    // plot run columns
+    svg.selectAll("matrixview")
+       .data(data)
+       .enter()
+       .append("text")
+       .attr("x", d => xScale(d[colBenchmark]))
+       .attr("y", d => yScale(d[colLabel]))
+       .attr("dominant-baseline", "central")
+       .attr("text-anchor", "middle")
+       .attr("class", "rank-label")
+       .text(d => d["rank"])
+
+    svg.selectAll("matrixview")
+       .data(data)
+       .enter()
+       //.append("rect")
+       //.attr("x", d => xScale(d[colBenchmark]) - blockSize/2)
+       //.attr("y", d => yScale(d[colLabel]) - blockSize/2)
+       //.attr("width", blockSize)
+       //.attr("height", blockSize)
+       .append("circle")
+       .attr("cx", d => xScale(d[colBenchmark]))
+       .attr("cy", d => yScale(d[colLabel]))
+       .attr("r", blockSize / 2)
+       .attr("fill", d => allColorScales[d[colBenchmark]](d[colTime]).replace(')', ', 0.75)').replace('rgb', 'rgba'))
+       .attr("stroke", "#0006")
+       .attr("class", "matrixview")
+       .on('mouseover', function (d) {
+         tip.show(d);
+         d3.select(this)
+           .transition()
+           .duration(100)
+           .attr("stroke", "#333")
+           .attr("r", blockSize/2 + 1);
+       })
+       .on('mouseout', function (d) {
+         d3.select(this)
+           .transition()
+           .duration(100)
+           .attr("stroke", "#0006")
+           .attr("r", blockSize/2);
+         tip.hide(d);
+       });
+  }
+
+  function rowFormatter(row) {
+    row[colTime] = +row[colTime];
+    row[colRelative] = +row[colRelative];
+    return row;
+  }
+
   d3.request(csvFile)
     .mimeType("text/csv")
     .response(function(xhr) { return d3.dsvFormat(";").parse(xhr.responseText, rowFormatter); })

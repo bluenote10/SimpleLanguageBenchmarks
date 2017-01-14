@@ -7,6 +7,8 @@
 
     {{ common_header | indent(4) }}
 
+    <link rel="stylesheet" type="text/css" href="styles/plotstyle.css">
+
   </head>
 
 
@@ -40,6 +42,20 @@
         <li><a href="{{ url }}">{{ name }}</a></li>
         {% endfor %}
       </ol>
+
+      <div class="page-header">
+        <h3>Result Overview</h3>
+      </div>
+      <div id="summary-plot"></div>
+      <p>
+        Notes:
+        The figure is based on the median run time of largest problem size.
+        The numbers correspond to the ranks within each benchmark.
+        Use mouse-over to see relative run times.
+        The color scale uses green for the minimum run time of a benchmark,
+        gray for the median run time,
+        and red is set to the point which is three standard deviations away from the median.
+      </p>
 
       <div class="page-header">
         <h3>Philosophy</h3>
@@ -112,12 +128,17 @@
         </tbody>
       </table>
 
-    <script src="../js/plotting.js"></script>
-
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Bootstrap -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script src="./js/d3-tip.js"></script>
+    <script src="./js/plotting.js"></script>
+
+    <script type="text/javascript">
+      visualizeCsvGeneralSummary("summary.csv", "#summary-plot");
+    </script>
 
   </body>
 </html>
