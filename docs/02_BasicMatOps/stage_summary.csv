@@ -1,22 +1,22 @@
 lang;descr;label;stage;time
-C++;default, gcc;C++ (default, gcc);IO;0.0982885
-C++;default, gcc;C++ (default, gcc);Add;0.000403612
-C++;default, gcc;C++ (default, gcc);Mul;0.10407
-C++;default, clang;C++ (default, clang);IO;0.0968687
-C++;default, clang;C++ (default, clang);Add;0.000402915
-C++;default, clang;C++ (default, clang);Mul;0.104501
-Nim;default, gcc;Nim (default, gcc);IO;0.157516956329
-Nim;default, gcc;Nim (default, gcc);Add;0.000746965408325
-Nim;default, gcc;Nim (default, gcc);Mul;0.105082035065
-Nim;default, clang;Nim (default, clang);IO;0.155468225479
-Nim;default, clang;Nim (default, clang);Add;0.000738859176636
-Nim;default, clang;Nim (default, clang);Mul;0.137038946152
-Python;default;Python (default);IO;0.224637985229
-Python;default;Python (default);Add;0.02596616745
-Python;default;Python (default);Mul;19.7973709106
-Python;numpy;Python (numpy);IO;0.316504955292
-Python;numpy;Python (numpy);Add;0.000736951828003
-Python;numpy;Python (numpy);Mul;0.0033540725708
-Scala;default;Scala (default);IO;0.330998377
-Scala;default;Scala (default);Add;0.008679875
-Scala;default;Scala (default);Mul;0.151973655
+C++;default, gcc;C++ (default, gcc);IO;0.0989789
+C++;default, gcc;C++ (default, gcc);Add;0.000416004
+C++;default, gcc;C++ (default, gcc);Mul;0.104163
+C++;default, clang;C++ (default, clang);IO;0.0980702
+C++;default, clang;C++ (default, clang);Add;0.000513326
+C++;default, clang;C++ (default, clang);Mul;0.105799
+Nim;default, gcc;Nim (default, gcc);IO;0.16073012352
+Nim;default, gcc;Nim (default, gcc);Add;0.000855922698975
+Nim;default, gcc;Nim (default, gcc);Mul;0.104279994965
+Nim;default, clang;Nim (default, clang);IO;0.152794122696
+Nim;default, clang;Nim (default, clang);Add;0.000853061676025
+Nim;default, clang;Nim (default, clang);Mul;0.136678934097
+Python;default;Python (default);IO;0.223914146423
+Python;default;Python (default);Add;0.0259158611298
+Python;default;Python (default);Mul;20.1543090343
+Python;numpy;Python (numpy);IO;0.318375110626
+Python;numpy;Python (numpy);Add;0.000699996948242
+Python;numpy;Python (numpy);Mul;0.00318598747253
+Scala;default;Scala (default);IO;0.326939778
+Scala;default;Scala (default);Add;0.007955205
+Scala;default;Scala (default);Mul;0.152566078

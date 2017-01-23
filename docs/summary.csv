@@ -1,20 +1,21 @@
 benchmark;lang;descr;url;label;time;relative;rank
-Wordcount;C++;default, gcc;implementations/C++/01_Wordcount/01_default_gcc/../default_main.cpp;C++ (default, gcc);3.3443233;1.58333860219;3
-Wordcount;C++;default, clang;implementations/C++/01_Wordcount/02_default_clang/../default_main.cpp;C++ (default, clang);3.4492774;1.63302813968;4
-BasicMatOps;C++;default, gcc;implementations/C++/02_BasicMatOps/01_default_gcc/../default_main.cpp;C++ (default, gcc);0.20321245;1.00479769912;2
-BasicMatOps;C++;default, clang;implementations/C++/02_BasicMatOps/02_default_clang/../default_main.cpp;C++ (default, clang);0.202242153;1.0;1
-Fibonacci;C++;default, gcc;implementations/C++/03_Fibonacci/01_default_gcc/../default_main.cpp;C++ (default, gcc);0.1698598;1.23669448837;3
-Fibonacci;C++;default, clang;implementations/C++/03_Fibonacci/02_default_clang/../default_main.cpp;C++ (default, clang);0.21096102;1.53593923162;4
-Wordcount;Nim;default, gcc;implementations/Nim/01_Wordcount/01_default_gcc/../main.nim;Nim (default, gcc);2.15397810936;1.01978079955;2
-Wordcount;Nim;default, clang;implementations/Nim/01_Wordcount/02_default_clang/../main.nim;Nim (default, clang);2.11219716072;1.0;1
-BasicMatOps;Nim;default, gcc;implementations/Nim/02_BasicMatOps/01_default_gcc/../main.nim;Nim (default, gcc);0.263345956802;1.3021318894;3
-BasicMatOps;Nim;default, clang;implementations/Nim/02_BasicMatOps/02_default_clang/../main.nim;Nim (default, clang);0.293244123459;1.44996539598;4
-Fibonacci;Nim;default, gcc;implementations/Nim/03_Fibonacci/01_default_gcc/../main.nim;Nim (default, gcc);0.160243272781;1.16667965138;2
-Fibonacci;Nim;default, clang;implementations/Nim/03_Fibonacci/02_default_clang/../main.nim;Nim (default, clang);0.216470956802;1.57605530661;5
-Wordcount;Python;default;implementations/Python/01_Wordcount/01_default/main.py;Python (default);3.70247983933;1.75290446753;5
-BasicMatOps;Python;default;implementations/Python/02_BasicMatOps/01_default/main.py;Python (default);20.0496227741;99.1367154506;7
-BasicMatOps;Python;numpy;implementations/Python/02_BasicMatOps/02_numpy/main.py;Python (numpy);0.320621013641;1.58533228056;5
-Fibonacci;Python;default;implementations/Python/03_Fibonacci/01_default/main.py;Python (default);13.6012501717;99.0263212498;6
-Wordcount;Scala;default;implementations/Scala/01_Wordcount/01_default/src/main/scala/main.scala;Scala (default);6.097307049;2.88671302205;6
-BasicMatOps;Scala;default;implementations/Scala/02_BasicMatOps/01_default/src/main/scala/main.scala;Scala (default);0.491745774;2.43147022866;6
-Fibonacci;Scala;default;implementations/Scala/03_Fibonacci/01_default/src/main/scala/main.scala;Scala (default);0.137349848;1.0;1
+Wordcount;C++;default, gcc;implementations/C++/01_Wordcount/01_default_gcc/../default_main.cpp;C++ (default, gcc);3.3591492;1.60203070438;3
+Wordcount;C++;default, clang;implementations/C++/01_Wordcount/02_default_clang/../default_main.cpp;C++ (default, clang);3.4640287;1.65204937555;4
+BasicMatOps;C++;default, gcc;implementations/C++/02_BasicMatOps/01_default_gcc/../default_main.cpp;C++ (default, gcc);0.203557904;1.0;1
+BasicMatOps;C++;default, clang;implementations/C++/02_BasicMatOps/02_default_clang/../default_main.cpp;C++ (default, clang);0.206380596;1.0138667767;2
+Fibonacci;C++;default, gcc;implementations/C++/03_Fibonacci/01_default_gcc/../default_main.cpp;C++ (default, gcc);0.16579057;1.20592434063;3
+Fibonacci;C++;default, clang;implementations/C++/03_Fibonacci/02_default_clang/../default_main.cpp;C++ (default, clang);0.20904599;1.52055480388;4
+Fibonacci;Go;default;implementations/Go/03_Fibonacci/01_default/../main.nim;Go (default);0.326225901;2.37289584419;6
+Wordcount;Nim;default, gcc;implementations/Nim/01_Wordcount/01_default_gcc/../main.nim;Nim (default, gcc);2.11917304993;1.010666717;2
+Wordcount;Nim;default, clang;implementations/Nim/01_Wordcount/02_default_clang/../main.nim;Nim (default, clang);2.09680700302;1.0;1
+BasicMatOps;Nim;default, gcc;implementations/Nim/02_BasicMatOps/01_default_gcc/../main.nim;Nim (default, gcc);0.265887260437;1.30619963761;3
+BasicMatOps;Nim;default, clang;implementations/Nim/02_BasicMatOps/02_default_clang/../main.nim;Nim (default, clang);0.290151834488;1.42540195584;4
+Fibonacci;Nim;default, gcc;implementations/Nim/03_Fibonacci/01_default_gcc/../main.nim;Nim (default, gcc);0.160503864288;1.16746999971;2
+Fibonacci;Nim;default, clang;implementations/Nim/03_Fibonacci/02_default_clang/../main.nim;Nim (default, clang);0.216608047485;1.57555955588;5
+Wordcount;Python;default;implementations/Python/01_Wordcount/01_default/main.py;Python (default);3.72385215759;1.77596323945;5
+BasicMatOps;Python;default;implementations/Python/02_BasicMatOps/01_default/main.py;Python (default);20.4056420326;100.244901483;7
+BasicMatOps;Python;numpy;implementations/Python/02_BasicMatOps/02_numpy/main.py;Python (numpy);0.3222219944;1.58295005042;5
+Fibonacci;Python;default;implementations/Python/03_Fibonacci/01_default/main.py;Python (default);13.7726919651;100.179548672;7
+Wordcount;Scala;default;implementations/Scala/01_Wordcount/01_default/src/main/scala/main.scala;Scala (default);6.160387213;2.93798485227;6
+BasicMatOps;Scala;default;implementations/Scala/02_BasicMatOps/01_default/src/main/scala/main.scala;Scala (default);0.48818562;2.39826413225;6
+Fibonacci;Scala;default;implementations/Scala/03_Fibonacci/01_default/src/main/scala/main.scala;Scala (default);0.137480076;1.0;1

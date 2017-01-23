@@ -39,7 +39,7 @@ class Fibonacci(object):
     <div class="page-header"></div>
     #### Control Output
 
-    After writing the stage runtimes to STDOUT, the implementations should print:
+    After writing the stage run times to STDOUT, the implementations should print:
 
     - N-th Fibonacci result (result from first stage)
     - checksum from second stage

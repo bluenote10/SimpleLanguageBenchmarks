@@ -147,13 +147,18 @@ class BenchmarkEntry(object):
             cwd=self.impl_path
         )
         stdout, stderr = p.communicate()
-        if len(stderr) > 0:
-            raise RuntimeError(stderr)
 
         print("Return code: {}".format(p.returncode))
         if p.returncode != 0:
             print_error(
-                "Run has failed."
+                "Run has failed with return code {}.".format(p.returncode)
+            )
+            print("STDOUT:\n" + stdout)
+            print("STDERR:\n" + stderr)
+
+        elif len(stderr) > 0:
+            print_error(
+                "Run has return code 0, but returned on STDERR."
             )
             print("STDOUT:\n" + stdout)
             print("STDERR:\n" + stderr)
@@ -295,6 +300,7 @@ def run_all_benchmarks(benchmark_entries, num_repetitions):
         ))
 
         # run
+        b_meta_data = benchmark_meta[b_entry.benchmark_name]
         args = b_meta_data.benchmark_args(size)
         stdout_filename = os.path.join(b_entry.result_path, "stdout_run_{}_{:04d}".format(size, run_id))
 

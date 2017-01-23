@@ -1,94 +1,106 @@
 lang;descr;label;size;run_id;time
-C++;default, gcc;C++ (default, gcc);S;1;0.00463097
-C++;default, gcc;C++ (default, gcc);S;2;0.00391516
-C++;default, gcc;C++ (default, gcc);S;3;0.00390902
-C++;default, gcc;C++ (default, gcc);S;4;0.00397843
-C++;default, gcc;C++ (default, gcc);S;5;0.00393006
-C++;default, gcc;C++ (default, gcc);M;1;0.036739
-C++;default, gcc;C++ (default, gcc);M;2;0.0345763
-C++;default, gcc;C++ (default, gcc);M;3;0.0391548
-C++;default, gcc;C++ (default, gcc);M;4;0.0349242
-C++;default, gcc;C++ (default, gcc);M;5;0.0377221
-C++;default, gcc;C++ (default, gcc);L;1;0.0982885
-C++;default, gcc;C++ (default, gcc);L;2;0.0953703
-C++;default, gcc;C++ (default, gcc);L;3;0.101698
-C++;default, gcc;C++ (default, gcc);L;4;0.0959722
-C++;default, gcc;C++ (default, gcc);L;5;0.0991434
-C++;default, clang;C++ (default, clang);S;1;0.00456071
-C++;default, clang;C++ (default, clang);S;2;0.00534705
-C++;default, clang;C++ (default, clang);S;3;0.00529481
-C++;default, clang;C++ (default, clang);S;4;0.00401466
-C++;default, clang;C++ (default, clang);S;5;0.00391746
-C++;default, clang;C++ (default, clang);M;1;0.0344195
-C++;default, clang;C++ (default, clang);M;2;0.0373876
-C++;default, clang;C++ (default, clang);M;3;0.0347965
-C++;default, clang;C++ (default, clang);M;4;0.0347535
-C++;default, clang;C++ (default, clang);M;5;0.0370806
-C++;default, clang;C++ (default, clang);L;1;0.100765
-C++;default, clang;C++ (default, clang);L;2;0.0948518
-C++;default, clang;C++ (default, clang);L;3;0.10053
-C++;default, clang;C++ (default, clang);L;4;0.0949163
-C++;default, clang;C++ (default, clang);L;5;0.0968687
-Nim;default, gcc;Nim (default, gcc);S;1;0.00898003578186
-Nim;default, gcc;Nim (default, gcc);S;2;0.00648713111877
-Nim;default, gcc;Nim (default, gcc);S;3;0.00811100006104
-Nim;default, gcc;Nim (default, gcc);M;1;0.057186126709
-Nim;default, gcc;Nim (default, gcc);M;2;0.0566818714142
-Nim;default, gcc;Nim (default, gcc);M;3;0.0584769248962
-Nim;default, gcc;Nim (default, gcc);L;1;0.159904003143
-Nim;default, gcc;Nim (default, gcc);L;2;0.157516956329
-Nim;default, gcc;Nim (default, gcc);L;3;0.1573138237
-Nim;default, clang;Nim (default, clang);S;1;0.00850391387939
-Nim;default, clang;Nim (default, clang);S;2;0.00908017158508
-Nim;default, clang;Nim (default, clang);S;3;0.00622987747192
-Nim;default, clang;Nim (default, clang);M;1;0.0590360164642
-Nim;default, clang;Nim (default, clang);M;2;0.0560550689697
-Nim;default, clang;Nim (default, clang);M;3;0.0551669597626
-Nim;default, clang;Nim (default, clang);L;1;0.155468225479
-Nim;default, clang;Nim (default, clang);L;2;0.153417110443
-Nim;default, clang;Nim (default, clang);L;3;0.1559882164
-Python;default;Python (default);S;1;0.00910806655884
-Python;default;Python (default);S;2;0.010598897934
-Python;default;Python (default);S;3;0.00897908210754
-Python;default;Python (default);S;4;0.0090959072113
-Python;default;Python (default);S;5;0.00909805297852
-Python;default;Python (default);M;1;0.0811371803284
-Python;default;Python (default);M;2;0.0842580795288
-Python;default;Python (default);M;3;0.0805459022522
-Python;default;Python (default);M;4;0.0809540748596
-Python;default;Python (default);M;5;0.0815231800079
-Python;default;Python (default);L;1;0.224112033844
-Python;default;Python (default);L;2;0.224637985229
-Python;default;Python (default);L;3;0.221729040146
-Python;default;Python (default);L;4;0.229306936264
-Python;default;Python (default);L;5;0.226027011871
-Python;numpy;Python (numpy);S;1;0.0133068561554
-Python;numpy;Python (numpy);S;2;0.0133259296417
-Python;numpy;Python (numpy);S;3;0.0134539604187
-Python;numpy;Python (numpy);S;4;0.0134019851685
-Python;numpy;Python (numpy);S;5;0.0132989883423
-Python;numpy;Python (numpy);M;1;0.120406866074
-Python;numpy;Python (numpy);M;2;0.113399028778
-Python;numpy;Python (numpy);M;3;0.114454030991
-Python;numpy;Python (numpy);M;4;0.113998174667
-Python;numpy;Python (numpy);M;5;0.114100933075
-Python;numpy;Python (numpy);L;1;0.316504955292
-Python;numpy;Python (numpy);L;2;0.315690040588
-Python;numpy;Python (numpy);L;3;0.317142009735
-Python;numpy;Python (numpy);L;4;0.317146062851
-Python;numpy;Python (numpy);L;5;0.315651893616
-Scala;default;Scala (default);S;1;0.098508407
-Scala;default;Scala (default);S;2;0.077076701
-Scala;default;Scala (default);S;3;0.078052034
-Scala;default;Scala (default);S;4;0.0739258
-Scala;default;Scala (default);S;5;0.076555494
-Scala;default;Scala (default);M;1;0.195144578
-Scala;default;Scala (default);M;2;0.197969378
-Scala;default;Scala (default);M;3;0.210642778
-Scala;default;Scala (default);M;4;0.183680767
-Scala;default;Scala (default);M;5;0.186622062
-Scala;default;Scala (default);L;1;0.331815589
-Scala;default;Scala (default);L;2;0.330998377
-Scala;default;Scala (default);L;3;0.337057177
-Scala;default;Scala (default);L;4;0.321904174
-Scala;default;Scala (default);L;5;0.323530514
+C++;default, gcc;C++ (default, gcc);S;1;0.00398139
+C++;default, gcc;C++ (default, gcc);S;2;0.003964
+C++;default, gcc;C++ (default, gcc);S;3;0.00400715
+C++;default, gcc;C++ (default, gcc);S;4;0.00402693
+C++;default, gcc;C++ (default, gcc);S;5;0.00393107
+C++;default, gcc;C++ (default, gcc);M;1;0.0353871
+C++;default, gcc;C++ (default, gcc);M;2;0.0381518
+C++;default, gcc;C++ (default, gcc);M;3;0.0366412
+C++;default, gcc;C++ (default, gcc);M;4;0.0353325
+C++;default, gcc;C++ (default, gcc);M;5;0.0390784
+C++;default, gcc;C++ (default, gcc);L;1;0.0987936
+C++;default, gcc;C++ (default, gcc);L;2;0.0990534
+C++;default, gcc;C++ (default, gcc);L;3;0.0995849
+C++;default, gcc;C++ (default, gcc);L;4;0.0989789
+C++;default, gcc;C++ (default, gcc);L;5;0.0957913
+C++;default, clang;C++ (default, clang);S;1;0.00401584
+C++;default, clang;C++ (default, clang);S;2;0.00465545
+C++;default, clang;C++ (default, clang);S;3;0.00396943
+C++;default, clang;C++ (default, clang);S;4;0.00395851
+C++;default, clang;C++ (default, clang);S;5;0.00509358
+C++;default, clang;C++ (default, clang);M;1;0.0347059
+C++;default, clang;C++ (default, clang);M;2;0.0375034
+C++;default, clang;C++ (default, clang);M;3;0.0346094
+C++;default, clang;C++ (default, clang);M;4;0.0377493
+C++;default, clang;C++ (default, clang);M;5;0.0346435
+C++;default, clang;C++ (default, clang);L;1;0.0995884
+C++;default, clang;C++ (default, clang);L;2;0.096216
+C++;default, clang;C++ (default, clang);L;3;0.0980702
+C++;default, clang;C++ (default, clang);L;4;0.0992581
+C++;default, clang;C++ (default, clang);L;5;0.0965814
+Nim;default, gcc;Nim (default, gcc);S;1;0.00652503967285
+Nim;default, gcc;Nim (default, gcc);S;2;0.00782704353333
+Nim;default, gcc;Nim (default, gcc);S;3;0.00835204124451
+Nim;default, gcc;Nim (default, gcc);S;4;0.00989389419556
+Nim;default, gcc;Nim (default, gcc);S;5;0.00645017623901
+Nim;default, gcc;Nim (default, gcc);M;1;0.0568060874939
+Nim;default, gcc;Nim (default, gcc);M;2;0.0567660331726
+Nim;default, gcc;Nim (default, gcc);M;3;0.0574519634247
+Nim;default, gcc;Nim (default, gcc);M;4;0.0566740036011
+Nim;default, gcc;Nim (default, gcc);M;5;0.0602970123291
+Nim;default, gcc;Nim (default, gcc);L;1;0.162478923798
+Nim;default, gcc;Nim (default, gcc);L;2;0.156551837921
+Nim;default, gcc;Nim (default, gcc);L;3;0.164644002914
+Nim;default, gcc;Nim (default, gcc);L;4;0.15715098381
+Nim;default, gcc;Nim (default, gcc);L;5;0.16073012352
+Nim;default, clang;Nim (default, clang);S;1;0.00638508796692
+Nim;default, clang;Nim (default, clang);S;2;0.00740385055542
+Nim;default, clang;Nim (default, clang);S;3;0.00822997093201
+Nim;default, clang;Nim (default, clang);S;4;0.0063750743866
+Nim;default, clang;Nim (default, clang);S;5;0.00764179229736
+Nim;default, clang;Nim (default, clang);M;1;0.0575220584869
+Nim;default, clang;Nim (default, clang);M;2;0.0551021099091
+Nim;default, clang;Nim (default, clang);M;3;0.0553679466248
+Nim;default, clang;Nim (default, clang);M;4;0.055456161499
+Nim;default, clang;Nim (default, clang);M;5;0.0619761943817
+Nim;default, clang;Nim (default, clang);L;1;0.152630090714
+Nim;default, clang;Nim (default, clang);L;2;0.155445098877
+Nim;default, clang;Nim (default, clang);L;3;0.156646966934
+Nim;default, clang;Nim (default, clang);L;4;0.152435779572
+Nim;default, clang;Nim (default, clang);L;5;0.152794122696
+Python;default;Python (default);S;1;0.0131471157074
+Python;default;Python (default);S;2;0.0091757774353
+Python;default;Python (default);S;3;0.00908184051514
+Python;default;Python (default);S;4;0.0105929374695
+Python;default;Python (default);S;5;0.0118119716644
+Python;default;Python (default);M;1;0.0831000804901
+Python;default;Python (default);M;2;0.0819630622864
+Python;default;Python (default);M;3;0.0806300640106
+Python;default;Python (default);M;4;0.0821990966797
+Python;default;Python (default);M;5;0.0826108455658
+Python;default;Python (default);L;1;0.224233865738
+Python;default;Python (default);L;2;0.22677898407
+Python;default;Python (default);L;3;0.223242044449
+Python;default;Python (default);L;4;0.221908092499
+Python;default;Python (default);L;5;0.223914146423
+Python;numpy;Python (numpy);S;1;0.0154139995575
+Python;numpy;Python (numpy);S;2;0.0133020877838
+Python;numpy;Python (numpy);S;3;0.0132219791412
+Python;numpy;Python (numpy);S;4;0.0133321285248
+Python;numpy;Python (numpy);S;5;0.0145580768585
+Python;numpy;Python (numpy);M;1;0.113696098328
+Python;numpy;Python (numpy);M;2;0.113219976425
+Python;numpy;Python (numpy);M;3;0.113950014114
+Python;numpy;Python (numpy);M;4;0.114687919617
+Python;numpy;Python (numpy);M;5;0.113573074341
+Python;numpy;Python (numpy);L;1;0.318375110626
+Python;numpy;Python (numpy);L;2;0.314641952515
+Python;numpy;Python (numpy);L;3;0.339031934738
+Python;numpy;Python (numpy);L;4;0.31875705719
+Python;numpy;Python (numpy);L;5;0.313978910446
+Scala;default;Scala (default);S;1;0.070465075
+Scala;default;Scala (default);S;2;0.071224273
+Scala;default;Scala (default);S;3;0.071785404
+Scala;default;Scala (default);S;4;0.071021908
+Scala;default;Scala (default);S;5;0.071325496
+Scala;default;Scala (default);M;1;0.211032935
+Scala;default;Scala (default);M;2;0.19239504
+Scala;default;Scala (default);M;3;0.188459976
+Scala;default;Scala (default);M;4;0.183698982
+Scala;default;Scala (default);M;5;0.184596644
+Scala;default;Scala (default);L;1;0.335988108
+Scala;default;Scala (default);L;2;0.326939778
+Scala;default;Scala (default);L;3;0.32521039
+Scala;default;Scala (default);L;4;0.32939488
+Scala;default;Scala (default);L;5;0.322058887

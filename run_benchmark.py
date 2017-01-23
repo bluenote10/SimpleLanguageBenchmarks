@@ -22,7 +22,7 @@ def parse_args():
     parser.add_argument(
         "--num-repetitions",
         type=int,
-        default=3,
+        default=5,
         help="Number of repetitions for each benchmark (default: 3).")
     parser.add_argument(
         "--benchmark",

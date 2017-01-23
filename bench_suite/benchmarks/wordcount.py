@@ -32,7 +32,7 @@ class Wordcount(object):
     <div class="page-header"></div>
     #### Control Output
 
-    After writing the stage runtimes to STDOUT, the implementations should print:
+    After writing the stage run times to STDOUT, the implementations should print:
 
     - Size of the word map
     - Sum of the counts in the map

@@ -113,6 +113,7 @@ def get_software_specs():
         ("Clang", lambda: get_line_from_command("clang++-3.8 --version")),
         ("JVM", lambda: get_line_from_command("java -version", 1)),
         ("Python", lambda: get_line_from_command("python --version")),
+        ("Go", lambda: get_line_from_command("go version")),
         ("Nim", lambda: get_line_from_command("nim --version")),
     ]
 

@@ -1,19 +1,19 @@
 lang;descr;label;stage;time
-C++;default, gcc;C++ (default, gcc);IO;0.0651964
-C++;default, gcc;C++ (default, gcc);Split;2.1827
-C++;default, gcc;C++ (default, gcc);Count;1.0966
-C++;default, clang;C++ (default, clang);IO;0.0631074
-C++;default, clang;C++ (default, clang);Split;2.14225
-C++;default, clang;C++ (default, clang);Count;1.22627
-Nim;default, gcc;Nim (default, gcc);IO;0.0277690887451
-Nim;default, gcc;Nim (default, gcc);Split;0.843291044235
-Nim;default, gcc;Nim (default, gcc);Count;1.28143715858
-Nim;default, clang;Nim (default, clang);IO;0.0265889167786
-Nim;default, clang;Nim (default, clang);Split;0.801571846008
-Nim;default, clang;Nim (default, clang);Count;1.28197717667
-Python;default;Python (default);IO;0.0181741714478
-Python;default;Python (default);Split;1.18239998817
-Python;default;Python (default);Count;2.50383782387
-Scala;default;Scala (default);IO;0.255796642
-Scala;default;Scala (default);Split;3.544706308
-Scala;default;Scala (default);Count;2.256854446
+C++;default, gcc;C++ (default, gcc);IO;0.0653956
+C++;default, gcc;C++ (default, gcc);Split;2.17158
+C++;default, gcc;C++ (default, gcc);Count;1.10894
+C++;default, clang;C++ (default, clang);IO;0.0662868
+C++;default, clang;C++ (default, clang);Split;2.13963
+C++;default, clang;C++ (default, clang);Count;1.25442
+Nim;default, gcc;Nim (default, gcc);IO;0.0301489830017
+Nim;default, gcc;Nim (default, gcc);Split;0.848474979401
+Nim;default, gcc;Nim (default, gcc);Count;1.23698496819
+Nim;default, clang;Nim (default, clang);IO;0.0273549556732
+Nim;default, clang;Nim (default, clang);Split;0.811696052551
+Nim;default, clang;Nim (default, clang);Count;1.25676608086
+Python;default;Python (default);IO;0.0184848308563
+Python;default;Python (default);Split;1.15469789505
+Python;default;Python (default);Count;2.54816508293
+Scala;default;Scala (default);IO;0.25706865
+Scala;default;Scala (default);Split;3.575003527
+Scala;default;Scala (default);Count;2.349918796

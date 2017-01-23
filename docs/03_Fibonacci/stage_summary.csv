@@ -1,19 +1,22 @@
 lang;descr;label;stage;time
-C++;default, gcc;C++ (default, gcc);Naive Recursion;0.147222
-C++;default, gcc;C++ (default, gcc);Tail Recursion;0.00919026
-C++;default, gcc;C++ (default, gcc);Iterative;0.0134055
-C++;default, clang;C++ (default, clang);Naive Recursion;0.191355
-C++;default, clang;C++ (default, clang);Tail Recursion;0.00532542
-C++;default, clang;C++ (default, clang);Iterative;0.0143196
-Nim;default, gcc;Nim (default, gcc);Naive Recursion;0.14045882225
-Nim;default, gcc;Nim (default, gcc);Tail Recursion;0.0102910995483
-Nim;default, gcc;Nim (default, gcc);Iterative;0.00952911376953
-Nim;default, clang;Nim (default, clang);Naive Recursion;0.196134090424
-Nim;default, clang;Nim (default, clang);Tail Recursion;0.00524306297302
-Nim;default, clang;Nim (default, clang);Iterative;0.015105009079
-Python;default;Python (default);Naive Recursion;9.79232501984
-Python;default;Python (default);Tail Recursion;2.61129498482
-Python;default;Python (default);Iterative;1.18959212303
-Scala;default;Scala (default);Naive Recursion;0.134947229
-Scala;default;Scala (default);Tail Recursion;0.002211896
-Scala;default;Scala (default);Iterative;0.000185371
+C++;default, gcc;C++ (default, gcc);Naive Recursion;0.143101
+C++;default, gcc;C++ (default, gcc);Tail Recursion;0.00919117
+C++;default, gcc;C++ (default, gcc);Iterative;0.0134125
+C++;default, clang;C++ (default, clang);Naive Recursion;0.188694
+C++;default, clang;C++ (default, clang);Tail Recursion;0.00529299
+C++;default, clang;C++ (default, clang);Iterative;0.0150457
+Go;default;Go (default);Naive Recursion;0.23287073
+Go;default;Go (default);Tail Recursion;0.079547528
+Go;default;Go (default);Iterative;0.01373245
+Nim;default, gcc;Nim (default, gcc);Naive Recursion;0.1407289505
+Nim;default, gcc;Nim (default, gcc);Tail Recursion;0.0102291107178
+Nim;default, gcc;Nim (default, gcc);Iterative;0.00953102111816
+Nim;default, clang;Nim (default, clang);Naive Recursion;0.196145057678
+Nim;default, clang;Nim (default, clang);Tail Recursion;0.00524497032166
+Nim;default, clang;Nim (default, clang);Iterative;0.0151040554047
+Python;default;Python (default);Naive Recursion;9.97855401039
+Python;default;Python (default);Tail Recursion;2.60945892334
+Python;default;Python (default);Iterative;1.19070911407
+Scala;default;Scala (default);Naive Recursion;0.135063851
+Scala;default;Scala (default);Tail Recursion;0.002247925
+Scala;default;Scala (default);Iterative;0.00018785

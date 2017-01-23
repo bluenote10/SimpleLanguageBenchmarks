@@ -44,7 +44,7 @@ class BasicMatOps(object):
     <div class="page-header"></div>
     #### Control Output
 
-    After writing the stage runtimes to STDOUT, the implementations should print:
+    After writing the stage run times to STDOUT, the implementations should print:
 
     - Sum of diagonal elements after addition
     - Sum of diagonal elements after multiplication
