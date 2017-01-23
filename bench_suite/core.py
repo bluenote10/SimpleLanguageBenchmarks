@@ -36,29 +36,31 @@ benchmark_id = {
 }
 
 
-def html_path():
-    return "docs"
+class Paths(object):
 
+    templates = "templates"
+    html = "docs"
 
-def html_path_benchmark(benchmark_name):
-    return os.path.join(
-        html_path(),
-        "{:02d}_{}".format(benchmark_id[benchmark_name], benchmark_name),
-    )
+    @staticmethod
+    def html_benchmark(benchmark_name):
+        return os.path.join(
+            Paths.html,
+            "{:02d}_{}".format(benchmark_id[benchmark_name], benchmark_name),
+        )
 
+    @staticmethod
+    def html_raw_runtime_csv(benchmark_name, stage_id, stage):
+        return os.path.join(
+            Paths.html_benchmark(benchmark_name),
+            "{:02d}_{}_plot.csv".format(stage_id, stage),
+        )
 
-def html_path_raw_runtime_csv(benchmark_name, stage_id, stage):
-    return os.path.join(
-        html_path_benchmark(benchmark_name),
-        "{:02d}_{}_plot.csv".format(stage_id, stage),
-    )
-
-
-def html_path_stage_summary_csv(benchmark_name, stage_id, stage):
-    return os.path.join(
-        html_path_benchmark(benchmark_name),
-        "stage_summary.csv",
-    )
+    @staticmethod
+    def html_stage_summary_csv(benchmark_name):
+        return os.path.join(
+            Paths.html_benchmark(benchmark_name),
+            "stage_summary.csv",
+        )
 
 
 class BenchmarkEntry(object):
@@ -308,7 +310,7 @@ def run_all_benchmarks(benchmark_entries, num_repetitions):
 
 def locate_sub_pages(relative_path="."):
     sub_pages_folder = sorted(glob.glob(
-        html_path() + "/*/index.html"
+        Paths.html + "/*/index.html"
     ))
     sub_pages = []
     for sub_page in sub_pages_folder:
@@ -362,7 +364,7 @@ def write_raw_runtime_csv(benchmark_name, run_times_per_stage, benchmark_entries
                 }
                 rows.append(row)
 
-        plot_csv = html_path_raw_runtime_csv(benchmark_name, stage_id, stage)
+        plot_csv = Paths.html_raw_runtime_csv(benchmark_name, stage_id, stage)
 
         write_csv_with_schema(
             plot_csv, rows,
@@ -394,7 +396,7 @@ def write_stage_summary_csv(benchmark_name, run_times_per_stage, benchmark_entri
             }
             rows.append(row)
 
-    plot_csv = html_path_stage_summary_csv(benchmark_name, stage_id, stage)
+    plot_csv = Paths.html_stage_summary_csv(benchmark_name)
 
     write_csv_with_schema(
         plot_csv, rows,
@@ -427,7 +429,7 @@ def generate_benchmark_html(name, benchmark_entries, meta_data):
 
         linear_scale = meta_data.linear_scales[stage]
 
-        plot_csv_basename = os.path.basename(html_path_raw_runtime_csv(name, stage_id, stage))
+        plot_csv_basename = os.path.basename(Paths.html_raw_runtime_csv(name, stage_id, stage))
         plot_calls += [
             'visualizeCsv("{}", "#plot{}", {});'.format(
                 plot_csv_basename,
@@ -451,7 +453,7 @@ def generate_benchmark_html(name, benchmark_entries, meta_data):
     html_description = markdown.markdown(meta_data.description)
 
     env = Environment(
-        loader=FileSystemLoader('templates'),
+        loader=FileSystemLoader(Paths.templates),
         undefined=StrictUndefined,
     )
     benchmark_template = env.get_template('benchmark.html')
@@ -477,7 +479,7 @@ def generate_benchmark_html(name, benchmark_entries, meta_data):
         plot_htmls=plot_htmls,
     )
 
-    out_path = os.path.join(html_path_benchmark(name), "index.html")
+    out_path = os.path.join(Paths.html_benchmark(name), "index.html")
     with open(out_path, "w") as f:
         f.write(html)
 
@@ -531,7 +533,7 @@ def write_general_summary_csv(affected_benchmarks, all_benchmark_entries):
             "rank": ranks[b_entry],
         }]
 
-    csv_filename = os.path.join(html_path(), "summary.csv")
+    csv_filename = os.path.join(Paths.html, "summary.csv")
     write_csv_with_schema(
         csv_filename, rows,
         schema=["benchmark", "lang", "descr", "url", "label", "time", "relative", "rank"]
@@ -549,7 +551,7 @@ def generate_summary_html(affected_benchmarks, all_benchmark_entries):
     markdown_fragments = load_markdown_fragments(convert_to_html=True)
 
     env = Environment(
-        loader=FileSystemLoader('templates'),
+        loader=FileSystemLoader(Paths.templates),
         undefined=StrictUndefined,
     )
     benchmark_template = env.get_template('main.html')
@@ -572,7 +574,7 @@ def generate_summary_html(affected_benchmarks, all_benchmark_entries):
         **markdown_fragments
     )
 
-    out_path = os.path.join(html_path(), "index.html")
+    out_path = os.path.join(Paths.html, "index.html")
     with open(out_path, "w") as f:
         f.write(html)
 
@@ -589,7 +591,10 @@ def load_markdown_fragments(convert_to_html=False):
     ]
     results = dict()
     for fragment in fragments:
-        text = read_file("templates/_{}.md".format(fragment))
+        text = read_file(os.path.join(
+            Paths.templates,
+            "_{}.md".format(fragment)
+        ))
         if convert_to_html:
             text = markdown.markdown(text)
         results[fragment] = text
@@ -599,10 +604,10 @@ def load_markdown_fragments(convert_to_html=False):
 def generate_summary_markdown():
 
     env = Environment(
-        loader=FileSystemLoader('templates'),
+        loader=FileSystemLoader(Paths.templates),
         undefined=StrictUndefined,
     )
-    readme_template = env.get_template('README.md')
+    readme_template = env.get_template("README.md")
 
     markdown_fragments = load_markdown_fragments()
 
