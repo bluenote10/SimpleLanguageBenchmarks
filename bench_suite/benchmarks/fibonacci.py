@@ -3,11 +3,8 @@
 from __future__ import division, print_function
 
 import textwrap
-import os
-import traceback
 
-from ..base import *
-from ..utils import *
+from ..base import Sizes, default_runtime_extractor
 
 
 class Fibonacci(object):
@@ -75,39 +72,10 @@ class Fibonacci(object):
 
     @staticmethod
     def result_extractor(b_entry):
-        # TODO: rewrite finally...
-        runtimes_io = []
-        runtimes_split = []
-        runtimes_count = []
-        for size in Sizes:
-            files = b_entry.result_files(size)
-            for fn in files:
-                with open(fn) as f:
-                    try:
-                        t1 = float(f.readline())
-                        t2 = float(f.readline())
-                        t3 = float(f.readline())
-                        runtimes_io.append(t1)
-                        runtimes_split.append(t2)
-                        runtimes_count.append(t3)
-                    except ValueError, e:
-                        print(
-                            AnsiColors.FAIL +
-                            "Output did not fulfil expected format:" +
-                            AnsiColors.ENDC
-                        )
-                        print(traceback.format_exc())
-
-        N = len(runtimes_io)
-        runtimes_total = [
-            runtimes_io[i] + runtimes_split[i] + runtimes_count[i]
-            for i in xrange(N)
-        ]
-
-        result = {
-            "Total": runtimes_total,
-            "Naive Recursion": runtimes_io,
-            "Tail Recursion": runtimes_split,
-            "Iterative": runtimes_count,
-        }
+        result = default_runtime_extractor(
+            b_entry,
+            Fibonacci.stages[1:],
+            add_total_stage=True
+        )
         return result
+

@@ -4,10 +4,9 @@ from __future__ import division, print_function
 
 import textwrap
 import os
-import traceback
 
-from ..base import *
-from ..utils import *
+from ..base import Sizes, default_runtime_extractor
+from ..utils import print_warn
 from .. import generators
 
 
@@ -92,42 +91,10 @@ class BasicMatOps(object):
 
     @staticmethod
     def result_extractor(b_entry):
-        # TODO: should we do the result validation here (when collecting the runtimes,
-        # TODO: better name would probably be "extract_runtimes") or should there be
-        # TODO: a separate "result_validator"? Probably the latter...
-        runtimes_io = []
-        runtimes_add = []
-        runtimes_mul = []
-        for size in Sizes:
-            files = b_entry.result_files(size)
-            for fn in files:
-                with open(fn) as f:
-                    try:
-                        t1 = float(f.readline())
-                        t2 = float(f.readline())
-                        t3 = float(f.readline())
-                        runtimes_io.append(t1)
-                        runtimes_add.append(t2)
-                        runtimes_mul.append(t3)
-                    except ValueError, e:
-                        print(
-                            AnsiColors.FAIL +
-                            "Output did not fulfil expected format:" +
-                            AnsiColors.ENDC
-                        )
-                        print(traceback.format_exc())
-
-        N = len(runtimes_io)
-        runtimes_total = [
-            runtimes_io[i] + runtimes_add[i] + runtimes_mul[i]
-            for i in xrange(N)
-        ]
-
-        result = {
-            "Total": runtimes_total,
-            "IO": runtimes_io,
-            "Add": runtimes_add,
-            "Mul": runtimes_mul,
-        }
+        result = default_runtime_extractor(
+            b_entry,
+            BasicMatOps.stages[1:],
+            add_total_stage=True
+        )
         return result
 
