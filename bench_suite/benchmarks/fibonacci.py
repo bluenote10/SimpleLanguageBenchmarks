@@ -53,6 +53,10 @@ class Fibonacci(object):
         Sizes.L: (38, int(1.45 ** 36)),
     }
 
+    @classmethod
+    def size_description(cls, size):
+        return "N = {}, M = {}".format(*cls.sizes[size])
+
     stages = ["Total", "Naive Recursion", "Tail Recursion", "Iterative"]
 
     linear_scales = {
@@ -62,19 +66,19 @@ class Fibonacci(object):
         "Iterative": False,
     }
 
-    @staticmethod
-    def benchmark_args(size):
-        return [str(N) for N in Fibonacci.sizes[size]]
+    @classmethod
+    def benchmark_args(cls, size):
+        return [str(N) for N in cls.sizes[size]]
 
-    @staticmethod
-    def ensure_data_exists():
+    @classmethod
+    def ensure_data_exists(cls):
         pass
 
-    @staticmethod
-    def result_extractor(b_entry):
+    @classmethod
+    def result_extractor(cls, b_entry):
         result = default_runtime_extractor(
             b_entry,
-            Fibonacci.stages[1:],
+            cls.stages[1:],
             add_total_stage=True
         )
         return result

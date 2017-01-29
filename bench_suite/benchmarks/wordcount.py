@@ -46,10 +46,14 @@ class Wordcount(object):
     }
 
     sizes = {
-        Sizes.S:   1 * 1000 * 1000,
-        Sizes.M:  10 * 1000 * 1000,
-        Sizes.L: 100 * 1000 * 1000,
+        Sizes.S:   1 * 1024 * 1024,
+        Sizes.M:  10 * 1024 * 1024,
+        Sizes.L: 100 * 1024 * 1024,
     }
+
+    @classmethod
+    def size_description(cls, size):
+        return "file size = ~{} MB".format(cls.sizes[size] / 1024 / 1024)
 
     stages = ["Total", "IO", "Split", "Count"]
 
@@ -60,24 +64,24 @@ class Wordcount(object):
         "Count": True,
     }
 
-    @staticmethod
-    def benchmark_args(size):
-        return [Wordcount._datafile[size]]
+    @classmethod
+    def benchmark_args(cls, size):
+        return [cls._datafile[size]]
 
-    @staticmethod
-    def ensure_data_exists():
-        for size, f in Wordcount._datafile.iteritems():
+    @classmethod
+    def ensure_data_exists(cls):
+        for size, f in cls._datafile.iteritems():
             if not os.path.exists(f):
                 print_warn(
                     " *** Generating data [{}], this might take a while...".format(f)
                 )
-                generators.generate_text(f, Wordcount.sizes[size])
+                generators.generate_text(f, cls.sizes[size])
 
-    @staticmethod
-    def result_extractor(b_entry):
+    @classmethod
+    def result_extractor(cls, b_entry):
         result = default_runtime_extractor(
             b_entry,
-            Wordcount.stages[1:],
+            cls.stages[1:],
             add_total_stage=True
         )
         return result

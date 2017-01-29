@@ -63,6 +63,10 @@ class BasicMatOps(object):
         Sizes.L: 500,
     }
 
+    @classmethod
+    def size_description(cls, size):
+        return "N = {}".format(cls.sizes[size])
+
     stages = ["Total", "IO", "Add", "Mul"]
 
     linear_scales = {
@@ -72,28 +76,28 @@ class BasicMatOps(object):
         "Mul": False,
     }
 
-    @staticmethod
-    def benchmark_args(size):
+    @classmethod
+    def benchmark_args(cls, size):
         return [
-            str(BasicMatOps.sizes[size]),
-            BasicMatOps._datafile[size],
-            BasicMatOps._datafile[size],
+            str(cls.sizes[size]),
+            cls._datafile[size],
+            cls._datafile[size],
         ]
 
-    @staticmethod
-    def ensure_data_exists():
-        for size, f in BasicMatOps._datafile.iteritems():
+    @classmethod
+    def ensure_data_exists(cls):
+        for size, f in cls._datafile.iteritems():
             if not os.path.exists(f):
                 print_warn(
                     " *** Generating data [{}], this might take a while...".format(f)
                 )
-                generators.generate_matrix(f, BasicMatOps.sizes[size])
+                generators.generate_matrix(f, cls.sizes[size])
 
-    @staticmethod
-    def result_extractor(b_entry):
+    @classmethod
+    def result_extractor(cls, b_entry):
         result = default_runtime_extractor(
             b_entry,
-            BasicMatOps.stages[1:],
+            cls.stages[1:],
             add_total_stage=True
         )
         return result

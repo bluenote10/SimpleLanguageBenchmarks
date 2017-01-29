@@ -45,9 +45,9 @@
         <h3>Results &#8210; Stage Summary</h3>
       </div>
       <p>
-        Each bar corresponds to the runtime of one particular stage.
+        Each bar corresponds to the run time of one particular stage.
         Use mouse-over to highlight a single stage for comparison.
-        Only shows runtimes of the largest data size.
+        Only shows run times of the largest data size.
       </p>
       <div id="stage-summary"></div>
 
@@ -56,11 +56,13 @@
       </div>
 
       {% for title, div in plot_htmls -%}
-      <h4>Runtime: {{title}}</h4>
+      <h4>Run time: {{title}}</h4>
       <p>
-        All raw runtimes of individual runs for
-        <span class="size-s">small</span>, <span class="size-m">medium</span>, and <span class="size-l">large</span>
-        data set sizes.
+        All raw run times of individual runs for
+        small <span class="size-s">({{ description_s }})</span>,
+        medium <span class="size-m">({{ description_m }})</span>, and
+        large <span class="size-l">({{ description_l }})</span>
+        problem sizes.
         Use mouse-over to see relative performance.
       </p>
       {{ div }}
