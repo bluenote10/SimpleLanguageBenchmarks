@@ -114,6 +114,7 @@ def get_software_specs():
         ("JVM", lambda: get_line_from_command("java -version", 1)),
         ("Python", lambda: get_line_from_command("python --version")),
         ("Go", lambda: get_line_from_command("go version")),
+        ("Rust", lambda: get_line_from_command("rustc --version")),
         ("Nim", lambda: get_line_from_command("nim --version")),
     ]
 

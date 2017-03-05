@@ -17,6 +17,9 @@ Nim;default, clang;Nim (default, clang);Iterative;0.0151040554047
 Python;default;Python (default);Naive Recursion;9.97855401039
 Python;default;Python (default);Tail Recursion;2.60945892334
 Python;default;Python (default);Iterative;1.19070911407
+Rust;default;Rust (default);Naive Recursion;0.197453948
+Rust;default;Rust (default);Tail Recursion;0.005400648
+Rust;default;Rust (default);Iterative;0.005432581
 Scala;default;Scala (default);Naive Recursion;0.135063851
 Scala;default;Scala (default);Tail Recursion;0.002247925
 Scala;default;Scala (default);Iterative;0.00018785
